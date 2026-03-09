@@ -1,0 +1,23 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - echo "Installing dependencies..."
+        - npm install -g http-server
+    build:
+      commands:
+        - echo "Building the application..."
+        - mkdir -p build
+        - cp -r src/main/resources/static/* build/
+        - echo "Build completed successfully"
+    postBuild:
+      commands:
+        - echo "Post-build phase completed"
+  artifacts:
+    baseDirectory: build
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*

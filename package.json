@@ -1,0 +1,28 @@
+{
+  "name": "tech-quiz-application",
+  "version": "1.0.0",
+  "description": "Interactive Tech Emoji Quiz Game with Skip Timer Feature",
+  "main": "index.html",
+  "scripts": {
+    "start": "http-server ./src/main/resources/static -p 8080",
+    "build": "mkdir -p dist && cp -r src/main/resources/static/* dist/",
+    "serve": "http-server ./dist -p 3000"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shanmugavel2345/Quiz-application.git"
+  },
+  "keywords": [
+    "quiz",
+    "tech",
+    "emoji",
+    "react",
+    "spring-boot",
+    "interactive"
+  ],
+  "author": "Shanmugavel",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
