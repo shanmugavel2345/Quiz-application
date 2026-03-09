@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tech Emoji Quiz - Ultimate Battle</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Page 1 - Team Setup */
+    .page-setup {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+      padding: 25px 20px;
+      position: relative;
+    }
+
+    /* Page 2 - Quiz Game - Subtle elegant colors */
+    .page-quiz {
+      height: 100vh;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      padding: 10px 15px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Tech Watermark Background */
+    .watermark-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+      opacity: 0.06;
+    }
+
+    .watermark-emoji {
+      position: absolute;
+      font-size: 3.5rem;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Headers */
+    .main-title {
+      text-align: center;
+      font-size: 2.8rem;
+      margin-bottom: 8px;
+      color: #ffffff;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.3)
+    }
+
+    .main-title span {
+      background: linear-gradient(90deg, #f9d423, #ff4e50, #f9d423);
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: rgba(255,255,255,0.9);
+      margin-bottom: 20px;
+      font-size: 1.1rem;
+    }
+
+    /* Cards */
+    .card {
+      background: rgba(255, 255, 255, 0.97);
+      border-radius: 24px;
+      padding: 25px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    }
+
+    .card h3 {
+      margin: 0 0 14px;
+      color: #764ba2;
+      font-size: 1.3rem;
+    }
+
+    /* Attractive Name Input Box */
+    .name-input-wrapper {
+      position: relative;
+      margin-bottom: 14px;
+      border-radius: 16px;
+      padding: 3px;
+      background: linear-gradient(135deg, #667eea, #764ba2, #f093fb, #ff6b6b, #feca57);
+      background-size: 300% 300%;
+      animation: gradient-border 4s ease infinite;
+    }
+
+    @keyframes gradient-border {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .name-input-wrapper textarea {
+      width: 100%;
+      border-radius: 14px;
+      border: none;
+      padding: 14px;
+      font-size: 1rem;
+      background: white;
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .name-input-wrapper textarea:focus {
+      outline: none;
+    }
+
+    input {
+      width: 100%;
+      border-radius: 14px;
+      border: 3px solid #e0e7ff;
+      padding: 12px;
+      font-size: 1rem;
+      margin-bottom: 10px;
+      transition: all 0.3s;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #764ba2;
+      box-shadow: 0 0 15px rgba(118, 75, 162, 0.3);
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    /* Buttons */
+    .btn {
+      width: 100%;
+      border-radius: 14px;
+      border: none;
+      padding: 14px 20px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-bottom: 10px;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #11998e, #38ef7d);
+      color: white;
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #eb3349, #f45c43);
+      color: white;
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, #f9d423, #ff4e50);
+      color: white;
+      font-size: 1.2rem;
+      padding: 18px;
+    }
+
+    .btn-start {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      font-size: 1.3rem;
+      padding: 16px 35px;
+      width: auto;
+    }
+
+    .btn-action {
+      width: auto;
+      min-width: 140px;
+      margin: 0 6px;
+      padding: 12px 18px;
+      font-size: 0.95rem;
+    }
+
+    /* Teams Grid */
+    .teams-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .team-card {
+      background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+      border-radius: 16px;
+      padding: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.5);
+    }
+
+    .team-card:nth-child(2) {
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    }
+
+    .team-card:nth-child(3) {
+      background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    }
+
+    .team-card:nth-child(4) {
+      background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%);
+    }
+
+    .team-card h4 {
+      margin: 0 0 10px;
+      color: #4a148c;
+      font-size: 1.1rem;
+    }
+
+    .members-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .member-tag {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      font-size: 0.8rem;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+
+    .info-text {
+      color: #6b7280;
+      font-size: 0.9rem;
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    /* Quiz Page - Compact Full Screen Layout */
+    .quiz-fullscreen {
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 15px;
+      height: calc(100vh - 70px);
+    }
+
+    @media (max-width: 900px) {
+      .quiz-fullscreen {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+    }
+
+    .quiz-main {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 15px 20px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .question-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      padding: 8px 25px;
+      border-radius: 25px;
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+
+    .team-playing-header {
+      color: #a8dadc;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    /* Team Members Display - Compact */
+    .team-members-display {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .member-badge {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    .emoji-display {
+      font-size: 5rem;
+      margin: 12px 0;
+      line-height: 1.2;
+      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3));
+    }
+
+    .icon-display {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      margin: 15px 0;
+    }
+
+    .icon-display img {
+      width: 100px;
+      height: 100px;
+      filter: drop-shadow(0 4px 15px rgba(255,255,255,0.3));
+    }
+
+    /* Compact Circular Clock Timer */
+    .clock-container {
+      display: flex;
+      justify-content: center;
+      margin: 10px 0;
+    }
+
+    .clock {
+      position: relative;
+      width: 100px;
+      height: 100px;
+    }
+
+    .clock-bg {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      border: 4px solid #4a5568;
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    }
+
+    .clock-progress {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .clock-progress svg {
+      transform: rotate(-90deg);
+    }
+
+    .clock-progress circle {
+      fill: none;
+      stroke-width: 8;
+      stroke-linecap: round;
+    }
+
+    .clock-progress .bg-circle {
+      stroke: #2d3748;
+    }
+
+    .clock-progress .progress-circle {
+      transition: stroke-dashoffset 1s linear;
+    }
+
+    .clock-time {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2rem;
+      font-weight: 900;
+      color: #ffffff;
+    }
+
+    .clock-label {
+      color: #a0aec0;
+      font-size: 0.8rem;
+      text-align: center;
+      margin-top: 5px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .timer-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      position: relative;
+      margin: 20px 0;
+    }
+
+    .skip-button-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .skip-timer-btn {
+      background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+      border: 2px solid #ff4757;
+      border-radius: 12px;
+      padding: 12px 20px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      color: white;
+      box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-width: 100px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .skip-timer-btn:hover:not(:disabled) {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(255, 107, 107, 0.6);
+      background: linear-gradient(135deg, #ff5252 0%, #d32f2f 100%);
+    }
+
+    .skip-timer-btn:active:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+    }
+
+    .skip-timer-btn:disabled {
+      background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+      border-color: #6b7280;
+      cursor: not-allowed;
+      opacity: 0.5;
+      box-shadow: none;
+    }
+
+    .answer-text {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #a8dadc;
+      min-height: 35px;
+      margin: 10px 0;
+    }
+
+    .actions-row {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .wrong-popup {
+      margin-top: 12px;
+      background: linear-gradient(135deg, #ff6b6b, #ee5a5a);
+      border-radius: 15px;
+      padding: 12px 20px;
+      color: white;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    /* Wait for Start - Compact */
+    .wait-start {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .wait-start h2 {
+      color: #f4a261;
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+    }
+
+    /* Scoreboard - Compact */
+    .scoreboard {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .scoreboard h3 {
+      color: #f4a261;
+      margin: 0 0 12px;
+      font-size: 1.2rem;
+      text-align: center;
+    }
+
+    .score-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+
+    .score-item.leading {
+      background: rgba(244, 162, 97, 0.25);
+      border-color: #f4a261;
+    }
+
+    .score-item .team-name {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .score-item .score {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #f4a261;
+    }
+
+    .winner-banner {
+      margin-top: 12px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-radius: 15px;
+      padding: 15px;
+      text-align: center;
+      color: white;
+    }
+
+    .winner-banner h4 {
+      margin: 0;
+      font-size: 1.3rem;
+    }
+
+    .end-game-btn {
+      margin-top: auto;
+      padding-top: 10px;
+    }
+
+    .end-game-btn .btn {
+      margin-bottom: 8px;
+    }
+
+    /* Party Blast - Only from bottom corners */
+    .burst-container {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9998;
+    }
+
+    .burst-particle {
+      position: absolute;
+      border-radius: 50%;
+      animation: burst-up ease-out forwards;
+    }
+
+    @keyframes burst-up {
+      0% { opacity: 1; transform: translate(0, 0) scale(1); }
+      100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.2); }
+    }
+
+    /* Chatbot - Small bottom right corner */
+    .chatbot-popup {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      padding: 12px 18px;
+      border-radius: 15px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-align: center;
+      z-index: 9000;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+      animation: chatbot-appear 0.4s ease-out, chatbot-disappear 0.4s ease-in 2.5s forwards;
+      max-width: 200px;
+    }
+
+    @keyframes chatbot-appear {
+      from { transform: translateY(20px) scale(0.8); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    @keyframes chatbot-disappear {
+      from { transform: translateY(0) scale(1); opacity: 1; }
+      to { transform: translateY(20px) scale(0.8); opacity: 0; }
+    }
+
+    .chatbot-popup .bot-icon {
+      font-size: 1.5rem;
+      display: block;
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useEffect, useMemo, useRef, useState } = React;
+
+    // Tech Quiz - 25 Questions (shuffled, no repeats)
+    const TECH_QUIZ = [
+      { icon: "https://cdn.simpleicons.org/github/white", answer: "GitHub" },
+      { icon: "https://cdn.simpleicons.org/docker/2496ED", answer: "Docker" },
+      { icon: "https://cdn.simpleicons.org/kubernetes/326CE5", answer: "Kubernetes" },
+      { emoji: "🌐 + 🕸️", answer: "Internet / Web" },
+      { emoji: "☁️ + 🖥️", answer: "Cloud Computing" },
+      { emoji: "🅰️ + ☁️", answer: "AWS" },
+      { emoji: "🟦 + ☁️", answer: "Microsoft Azure" },
+      { emoji: "🔍 + 📊", answer: "ELK Stack / Elasticsearch" },
+      { icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg", answer: "Linux" },
+      { icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg", answer: "Java" },
+      { emoji: "📦 + 🔄", answer: "CI/CD" },
+      { emoji: "🧪 + 🤖", answer: "Automation Testing" },
+      { emoji: "🔒 + ☁️", answer: "Cloud Security" },
+      { emoji: "📊 + 📈", answer: "Monitoring / Metrics" },
+      { emoji: "🚀 + 💻", answer: "Deployment" },
+      { emoji: "🐍 + 💻", answer: "Python" },
+      { emoji: "☕ + 🌱", answer: "Spring Boot" },
+      { emoji: "🔁 + 🔧", answer: "DevOps" },
+      { emoji: "📦 + 🐳 + ☁️", answer: "Container Deployment" },
+      { emoji: "📜 + ⚙️", answer: "Configuration File" },
+      { emoji: "🐙 + 🌿", answer: "Git Branch" },
+      { emoji: "🧱 + ☁️", answer: "Infrastructure as Code" },
+      { emoji: "🔑 + 🔐", answer: "Authentication" },
+      { emoji: "📡 + 🌐", answer: "API" },
+      { emoji: "💾 + 🗄️", answer: "Database" }
+    ];
+
+    const WRONG_MESSAGES = [
+      "🎉 Amazing teamwork! You'll get the next one!",
+      "💪 Don't give up! Champions never quit!",
+      "⭐ So close! Keep that energy going!",
+      "🚀 Great attempt! Next one is yours!",
+      "🔥 Keep the fire burning! You've got this!",
+      "🌟 Brilliant effort! Victory is coming!",
+      "💫 Almost there! Stay focused!",
+      "🎯 Nice try! The trophy awaits!"
+    ];
+
+    const BURST_COLORS = [
+      '#667eea', '#764ba2', '#f093fb', '#f4a261', '#e9c46a',
+      '#2a9d8f', '#e76f51', '#a8dadc', '#457b9d', '#1d3557'
+    ];
+
+    const WATERMARK_EMOJIS = ['💻', '🐍', '☁️', '🐳', '⚛️', '🚀', '🔧', '📱', '🌐', '🤖', '🔐', '📊', '🐙', '☕', '🦀', '⚡'];
+
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function splitTeams(names, teamCount, membersPerTeam) {
+      const shuffled = shuffleArray(names);
+      const teams = Array.from({ length: teamCount }, (_, idx) => ({
+        name: `Team ${idx + 1}`,
+        members: []
+      }));
+      
+      for (let i = 0; i < shuffled.length && i < teamCount * membersPerTeam; i++) {
+        teams[i % teamCount].members.push(shuffled[i]);
+      }
+      return teams;
+    }
+
+    // Watermark Background Component
+    function WatermarkBackground() {
+      const emojis = useMemo(() => {
+        const items = [];
+        for (let i = 0; i < 25; i++) {
+          items.push({
+            id: i,
+            emoji: WATERMARK_EMOJIS[i % WATERMARK_EMOJIS.length],
+            left: Math.random() * 100,
+            top: Math.random() * 100,
+            size: 2.5 + Math.random() * 2
+          });
+        }
+        return items;
+      }, []);
+
+      return (
+        <div className="watermark-bg">
+          {emojis.map(e => (
+            <span
+              key={e.id}
+              className="watermark-emoji"
+              style={{
+                left: `${e.left}%`,
+                top: `${e.top}%`,
+                fontSize: `${e.size}rem`
+              }}
+            >
+              {e.emoji}
+            </span>
+          ))}
+        </div>
+      );
+    }
+
+    // Party Blast - Only from bottom left and right corners
+    function PartyBlast({ active }) {
+      const [particles, setParticles] = useState({ leftBurst: [], rightBurst: [] });
+
+      useEffect(() => {
+        if (!active) {
+          setParticles({ leftBurst: [], rightBurst: [] });
+          return;
+        }
+
+        const leftBurst = [];
+        for (let i = 0; i < 80; i++) {
+          const angle = -Math.PI / 4 + Math.random() * Math.PI / 2;
+          const distance = 200 + Math.random() * 600;
+          leftBurst.push({
+            id: `lb-${i}`,
+            color: BURST_COLORS[Math.floor(Math.random() * BURST_COLORS.length)],
+            size: 10 + Math.random() * 20,
+            tx: Math.cos(angle) * distance,
+            ty: -Math.abs(Math.sin(angle) * distance),
+            delay: Math.random() * 0.5,
+            duration: 1 + Math.random() * 1.5
+          });
+        }
+
+        const rightBurst = [];
+        for (let i = 0; i < 80; i++) {
+          const angle = Math.PI - Math.PI / 4 + Math.random() * Math.PI / 2;
+          const distance = 200 + Math.random() * 600;
+          rightBurst.push({
+            id: `rb-${i}`,
+            color: BURST_COLORS[Math.floor(Math.random() * BURST_COLORS.length)],
+            size: 10 + Math.random() * 20,
+            tx: Math.cos(angle) * distance,
+            ty: -Math.abs(Math.sin(angle) * distance),
+            delay: Math.random() * 0.5,
+            duration: 1 + Math.random() * 1.5
+          });
+        }
+
+        setParticles({ leftBurst, rightBurst });
+        const timer = setTimeout(() => setParticles({ leftBurst: [], rightBurst: [] }), 4000);
+        return () => clearTimeout(timer);
+      }, [active]);
+
+      if (!particles.leftBurst.length) return null;
+
+      return (
+        <div className="burst-container">
+          {particles.leftBurst.map(p => (
+            <div
+              key={p.id}
+              className="burst-particle"
+              style={{
+                left: 0,
+                bottom: 0,
+                width: p.size,
+                height: p.size,
+                background: p.color,
+                '--tx': `${p.tx}px`,
+                '--ty': `${p.ty}px`,
+                animationDelay: `${p.delay}s`,
+                animationDuration: `${p.duration}s`
+              }}
+            />
+          ))}
+          {particles.rightBurst.map(p => (
+            <div
+              key={p.id}
+              className="burst-particle"
+              style={{
+                right: 0,
+                left: 'auto',
+                bottom: 0,
+                width: p.size,
+                height: p.size,
+                background: p.color,
+                '--tx': `${p.tx}px`,
+                '--ty': `${p.ty}px`,
+                animationDelay: `${p.delay}s`,
+                animationDuration: `${p.duration}s`
+              }}
+            />
+          ))}
+        </div>
+      );
+    }
+
+    // Compact Circular Clock Timer
+    function ClockTimer({ seconds, maxSeconds }) {
+      const radius = 40;
+      const circumference = 2 * Math.PI * radius;
+      const progress = (seconds / maxSeconds) * circumference;
+
+      const getColor = () => {
+        if (seconds <= 3) return '#ef4444';
+        if (seconds <= 7) return '#f59e0b';
+        return '#a8dadc';
+      };
+
+      return (
+        <div className="clock-container">
+          <div className="clock">
+            <div className="clock-bg" />
+            <div className="clock-progress">
+              <svg width="100" height="100">
+                <circle className="bg-circle" cx="50" cy="50" r={radius} />
+                <circle
+                  className="progress-circle"
+                  cx="50"
+                  cy="50"
+                  r={radius}
+                  style={{ stroke: getColor() }}
+                  strokeDasharray={circumference}
+                  strokeDashoffset={circumference - progress}
+                />
+              </svg>
+            </div>
+            <div className="clock-time" style={{ color: seconds <= 3 ? '#ef4444' : '#ffffff' }}>
+              {seconds}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // Small Chatbot Popup - Bottom Right
+    function ChatbotPopup({ teamName, visible }) {
+      if (!visible) return null;
+      return (
+        <div className="chatbot-popup">
+          <span className="bot-icon">🤖</span>
+          {teamName}, get ready!<br />
+          <span style={{ fontSize: '0.8rem', opacity: 0.9 }}>You're up next!</span>
+        </div>
+      );
+    }
+
+    // Page 1: Team Setup
+    function TeamSetupPage({ onStartQuiz }) {
+      const [nameInput, setNameInput] = useState("");
+      const [teamCount, setTeamCount] = useState(4);
+      const [membersPerTeam, setMembersPerTeam] = useState(5);
+      const [teams, setTeams] = useState([]);
+
+      const parsedNames = useMemo(() => {
+        return nameInput.split(/\n|,/).map(n => n.trim()).filter(Boolean);
+      }, [nameInput]);
+
+      const totalSlots = teamCount * membersPerTeam;
+
+      function handleShuffle() {
+        if (parsedNames.length < totalSlots) {
+          alert(`Need at least ${totalSlots} names for ${teamCount} teams × ${membersPerTeam} members.`);
+          return;
+        }
+        const generated = splitTeams(parsedNames, teamCount, membersPerTeam);
+        setTeams(generated);
+      }
+
+      function handleStart() {
+        if (!teams.length) {
+          alert("Please shuffle teams first!");
+          return;
+        }
+        onStartQuiz(teams);
+      }
+
+      return (
+        <div className="page-setup">
+          <WatermarkBackground />
+          <div className="container">
+            <h1 className="main-title">🚀 <span>Tech Emoji Quiz</span> 🎮</h1>
+            <p className="subtitle">The Ultimate Tech Knowledge Battle! Split your team and compete!</p>
+
+            <div className="card">
+              <h3>👥 Enter Participant Names</h3>
+              <div className="name-input-wrapper">
+                <textarea
+                  rows="5"
+                  placeholder="Enter names separated by comma or new line...&#10;Example: John, Jane, Mike, Sarah, Tom, Lisa..."
+                  value={nameInput}
+                  onChange={e => setNameInput(e.target.value)}
+                />
+              </div>
+
+              <div className="row">
+                <div>
+                  <label style={{ display: 'block', marginBottom: 5, color: '#6b7280', fontSize: '0.85rem', fontWeight: 600 }}>
+                    🎯 Number of Teams
+                  </label>
+                  <input
+                    type="number"
+                    min="2"
+                    max="10"
+                    value={teamCount}
+                    onChange={e => setTeamCount(Math.max(2, Number(e.target.value || 2)))}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: 5, color: '#6b7280', fontSize: '0.85rem', fontWeight: 600 }}>
+                    👤 Members per Team
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="20"
+                    value={membersPerTeam}
+                    onChange={e => setMembersPerTeam(Math.max(1, Number(e.target.value || 1)))}
+                  />
+                </div>
+              </div>
+
+              <button className="btn btn-primary" onClick={handleShuffle}>
+                🔀 SHUFFLE & CREATE TEAMS
+              </button>
+
+              <p className="info-text">
+                ✅ Names entered: <strong style={{ color: '#764ba2' }}>{parsedNames.length}</strong> | 
+                📋 Required: <strong style={{ color: '#764ba2' }}>{totalSlots}</strong>
+              </p>
+
+              {teams.length > 0 && (
+                <>
+                  <div className="teams-grid">
+                    {teams.map((team, idx) => (
+                      <div key={team.name} className="team-card">
+                        <h4>🏆 {team.name}</h4>
+                        <div className="members-list">
+                          {team.members.map((m, i) => (
+                            <span key={`${team.name}-${i}`} className="member-tag">{m}</span>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <button className="btn btn-gold" onClick={handleStart} style={{ marginTop: 20 }}>
+                    🎯 START THE QUIZ BATTLE →
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // Page 2: Quiz Game - Compact layout, no scrolling
+    function QuizGamePage({ teams, onEndGame }) {
+      const [quiz] = useState(() => shuffleArray(TECH_QUIZ));
+      const [currentIndex, setCurrentIndex] = useState(0);
+      const [countdown, setCountdown] = useState(15);
+      const [isTimerRunning, setIsTimerRunning] = useState(false);
+      const [questionStarted, setQuestionStarted] = useState(false);
+      const [canReveal, setCanReveal] = useState(false);
+      const [showAnswer, setShowAnswer] = useState(false);
+      const [scores, setScores] = useState(() => {
+        const init = {};
+        teams.forEach(t => init[t.name] = 0);
+        return init;
+      });
+      const [wrongPopup, setWrongPopup] = useState("");
+      const [partyBlast, setPartyBlast] = useState(false);
+      const [isGameEnded, setIsGameEnded] = useState(false);
+      const [showChatbot, setShowChatbot] = useState(false);
+
+      const timerRef = useRef(null);
+      const MAX_TIME = 15;
+
+      const currentTeamIndex = currentIndex % teams.length;
+      const currentTeam = teams[currentTeamIndex];
+      const nextTeam = teams[(currentTeamIndex + 1) % teams.length];
+      const question = quiz[currentIndex];
+
+      const topScorer = useMemo(() => {
+        const sorted = teams.map(t => ({ name: t.name, score: scores[t.name] || 0 }))
+          .sort((a, b) => b.score - a.score);
+        return sorted[0];
+      }, [scores, teams]);
+
+      useEffect(() => {
+        if (!isTimerRunning) {
+          if (timerRef.current) clearInterval(timerRef.current);
+          return;
+        }
+
+        timerRef.current = setInterval(() => {
+          setCountdown(prev => {
+            if (prev <= 1) {
+              clearInterval(timerRef.current);
+              setIsTimerRunning(false);
+              setCanReveal(true);
+              return 0;
+            }
+            return prev - 1;
+          });
+        }, 1000);
+
+        return () => {
+          if (timerRef.current) clearInterval(timerRef.current);
+        };
+      }, [isTimerRunning]);
+
+      function startQuestion() {
+        setQuestionStarted(true);
+        setIsTimerRunning(true);
+      }
+
+      function skipTimer() {
+        if (isTimerRunning) {
+          if (timerRef.current) clearInterval(timerRef.current);
+          setCountdown(0);
+          setIsTimerRunning(false);
+          setCanReveal(true);
+        }
+      }
+
+      function resetRound() {
+        setCountdown(15);
+        setCanReveal(false);
+        setShowAnswer(false);
+        setWrongPopup("");
+        setQuestionStarted(false);
+        setIsTimerRunning(false);
+      }
+
+      function moveNext() {
+        if (currentIndex + 1 >= quiz.length) {
+          setIsGameEnded(true);
+          setPartyBlast(true);
+          return;
+        }
+        
+        // Show chatbot for next team
+        setShowChatbot(true);
+        setTimeout(() => setShowChatbot(false), 3000);
+        
+        setCurrentIndex(currentIndex + 1);
+        resetRound();
+      }
+
+      function handleReveal() {
+        setShowAnswer(true);
+      }
+
+      function handleCorrect() {
+        setScores(prev => ({
+          ...prev,
+          [currentTeam.name]: (prev[currentTeam.name] || 0) + 1
+        }));
+        setPartyBlast(true);
+        setTimeout(() => setPartyBlast(false), 4000);
+        setTimeout(moveNext, 2000);
+      }
+
+      function handleWrong() {
+        const msg = WRONG_MESSAGES[Math.floor(Math.random() * WRONG_MESSAGES.length)];
+        setWrongPopup(msg);
+        setTimeout(moveNext, 1500);
+      }
+
+      function handleEndGame() {
+        setIsGameEnded(true);
+        setIsTimerRunning(false);
+        setPartyBlast(true);
+      }
+
+      const progress = `${Math.min(currentIndex + 1, quiz.length)} / ${quiz.length}`;
+
+      return (
+        <div className="page-quiz">
+          <WatermarkBackground />
+          <PartyBlast active={partyBlast} />
+          <ChatbotPopup teamName={nextTeam?.name} visible={showChatbot} />
+
+          <div className="container" style={{ height: '100%' }}>
+            <h1 className="main-title" style={{ marginBottom: 8, fontSize: '1.8rem' }}>
+              🎮 <span>Quiz Battle</span> 🏆
+            </h1>
+
+            <div className="quiz-fullscreen">
+              <div className="quiz-main">
+                <div className="question-badge">❓ Question {progress}</div>
+                
+                <div className="team-playing-header">
+                  {isGameEnded ? "🏆 GAME OVER!" : `🎯 ${currentTeam.name}'s Turn`}
+                </div>
+
+                {/* Show Team Members */}
+                {!isGameEnded && (
+                  <div className="team-members-display">
+                    {currentTeam.members.map((member, idx) => (
+                      <span key={idx} className="member-badge">{member}</span>
+                    ))}
+                  </div>
+                )}
+
+                {question && !isGameEnded && (
+                  <>
+                    {!questionStarted ? (
+                      <div className="wait-start">
+                        <h2>🎯 {currentTeam.name} - Ready?</h2>
+                        <button className="btn btn-start" onClick={startQuestion}>
+                          ▶️ START
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        {question.icon ? (
+                          <div className="icon-display">
+                            <img src={question.icon} alt="Guess this tech" />
+                          </div>
+                        ) : (
+                          <div className="emoji-display">{question.emoji}</div>
+                        )}
+
+                        <div className="timer-container">
+                          <ClockTimer seconds={countdown} maxSeconds={MAX_TIME} />
+                          <div className="skip-button-wrapper">
+                            <button 
+                              className="skip-timer-btn" 
+                              onClick={skipTimer}
+                              disabled={!isTimerRunning}
+                              title="Skip Timer"
+                            >
+                              ⏭️ SKIP
+                            </button>
+                          </div>
+                        </div>
+                        <div className="clock-label">⏱️ Seconds</div>
+
+                        <div className="answer-text">
+                          {showAnswer ? `✨ ${question.answer}` : "🤔 What is this?"}
+                        </div>
+
+                        <div className="actions-row">
+                          <button 
+                            className="btn btn-primary btn-action" 
+                            onClick={handleReveal}
+                            disabled={!canReveal || showAnswer}
+                          >
+                            👀 SHOW
+                          </button>
+                          <button 
+                            className="btn btn-success btn-action" 
+                            onClick={handleCorrect}
+                            disabled={!showAnswer}
+                          >
+                            ✅ CORRECT
+                          </button>
+                          <button 
+                            className="btn btn-danger btn-action" 
+                            onClick={handleWrong}
+                            disabled={!showAnswer}
+                          >
+                            ❌ WRONG
+                          </button>
+                        </div>
+
+                        {wrongPopup && <div className="wrong-popup">{wrongPopup}</div>}
+                      </>
+                    )}
+                  </>
+                )}
+              </div>
+
+              <div className="scoreboard">
+                <h3>🏅 SCOREBOARD</h3>
+                {teams.map(team => {
+                  const score = scores[team.name] || 0;
+                  const isLeading = topScorer && score === topScorer.score && score > 0;
+                  return (
+                    <div key={team.name} className={`score-item ${isLeading ? 'leading' : ''}`}>
+                      <span className="team-name">{team.name}</span>
+                      <span className="score">{score}</span>
+                    </div>
+                  );
+                })}
+
+                {isGameEnded && topScorer && (
+                  <div className="winner-banner">
+                    <h4>🎉 CHAMPION: {topScorer.name}</h4>
+                    <p style={{ margin: '8px 0 0', fontSize: '1rem' }}>
+                      Score: {topScorer.score} / {quiz.length}
+                    </p>
+                  </div>
+                )}
+
+                <div className="end-game-btn">
+                  <button className="btn btn-danger" onClick={handleEndGame}>
+                    ⏹️ END GAME
+                  </button>
+                  {isGameEnded && (
+                    <button className="btn btn-primary" onClick={onEndGame}>
+                      🔄 NEW GAME
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // Main App
+    function App() {
+      const [page, setPage] = useState('setup');
+      const [teams, setTeams] = useState([]);
+
+      function startQuiz(generatedTeams) {
+        setTeams(generatedTeams);
+        setPage('quiz');
+      }
+
+      function endGame() {
+        setTeams([]);
+        setPage('setup');
+      }
+
+      return page === 'setup' 
+        ? <TeamSetupPage onStartQuiz={startQuiz} />
+        : <QuizGamePage teams={teams} onEndGame={endGame} />;
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>
