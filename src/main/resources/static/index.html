@@ -443,33 +443,110 @@
     const QUESTION_SECONDS = 15;
     const POLL_MS = 3000;
 
-    const QUESTIONS = [
-      { emoji: "☁️", clue: "The remote storage we all use.", correct: "Cloud", options: ["Cloud", "Server Room", "Database", "Local Disk"] },
-      { emoji: "🐭", clue: "Not the animal, the clicker.", correct: "Mouse", options: ["Mouse", "Keyboard", "Touchpad", "Stylus"] },
-      { emoji: "🕸️ 🌐", clue: "The world wide...", correct: "Web / Internet", options: ["Web / Internet", "Network Cable", "Data Center", "Router"] },
-      { emoji: "🔋 💻", clue: "What you plug in when it's at 1%.", correct: "Charger", options: ["Charger", "Power Bank", "Battery", "Adapter"] },
-      { emoji: "🧱 🔥", clue: "A security barrier for networks.", correct: "Firewall", options: ["Firewall", "Antivirus", "VPN", "Encryption"] },
-      { emoji: "🦷 🔵", clue: "Wireless connection for headphones.", correct: "Bluetooth", options: ["Bluetooth", "WiFi", "NFC", "Infrared"] },
-      { emoji: "💾", clue: "The old save icon.", correct: "Floppy Disk", options: ["Floppy Disk", "Hard Drive", "SSD", "Memory Card"] },
-      { emoji: "🛰️ 📍", clue: "How your phone knows where you are.", correct: "GPS", options: ["GPS", "WiFi Tracking", "Bluetooth Tracking", "Satellite TV"] },
-      { emoji: "🐍", clue: "Popular programming language.", correct: "Python", options: ["Python", "Ruby", "JavaScript", "Go"] },
-      { emoji: "☕", clue: "Programming language and drink.", correct: "Java", options: ["Java", "Kotlin", "Swift", "Scala"] },
-      { emoji: "🍎", clue: "Tech giant from Cupertino.", correct: "Apple", options: ["Apple", "Microsoft", "Google", "Samsung"] },
-      { emoji: "🐧", clue: "Mascot for open-source OS.", correct: "Linux", options: ["Linux", "Unix", "Windows", "Solaris"] },
-      { emoji: "🖼️ 🪟", clue: "OS most PCs run on.", correct: "Windows", options: ["Windows", "Linux", "macOS", "ChromeOS"] },
-      { emoji: "🤖", clue: "OS for most non-Apple phones.", correct: "Android", options: ["Android", "iOS", "HarmonyOS", "Windows Phone"] },
-      { emoji: "🛒 📦", clue: "E-commerce giant.", correct: "Amazon", options: ["Amazon", "eBay", "Flipkart", "Alibaba"] },
-      { emoji: "🎥 🟦", clue: "Video conferencing tool.", correct: "Zoom", options: ["Zoom", "Skype", "Google Meet", "Teams"] },
-      { emoji: "1 + 1 (Binary)", clue: "Binary math time.", correct: "10", options: ["10", "2", "11", "01"] },
-      { emoji: "PNT", clue: "Expand this short form.", correct: "Point", options: ["Point", "Pixel", "Path", "Port"] },
-      { emoji: "404", clue: "Classic web status meaning.", correct: "Not Found", options: ["Not Found", "Server Error", "Timeout", "Forbidden"] },
-      { emoji: "I / O", clue: "Common systems term.", correct: "Input / Output", options: ["Input / Output", "Internal Operation", "Internet Output", "Input Order"] },
-      { emoji: "API", clue: "Expand API.", correct: "Application Programming Interface", options: ["Application Programming Interface", "Advanced Program Index", "Application Process Integration", "Automated Program Interface"] },
-      { emoji: "UI / UX", clue: "Expand UI / UX.", correct: "User Interface / User Experience", options: ["User Interface / User Experience", "Universal Internet Extension", "User Integration Engine", "Unified Interface Experience"] },
-      { emoji: "RAM", clue: "Expand RAM.", correct: "Random Access Memory", options: ["Random Access Memory", "Read Access Module", "Rapid Application Memory", "Runtime Access Method"] },
-      { emoji: "CPU", clue: "Expand CPU.", correct: "Central Processing Unit", options: ["Central Processing Unit", "Computer Processing Utility", "Core Program Unit", "Central Program Utility"] },
-      { emoji: "URL", clue: "Expand URL.", correct: "Uniform Resource Locator", options: ["Uniform Resource Locator", "Universal Resource Link", "User Reference Link", "Unified Routing Layer"] }
+    const QUIZ_BANK = [
+      { id: "q001", emoji: "🐍 + ☕", answer: "Java" },
+      { id: "q002", emoji: "☁️ + 💻", answer: "Cloud Computing" },
+      { id: "q003", emoji: "🐙 + 🐱", answer: "GitHub" },
+      { id: "q004", emoji: "🔑 + 🔒", answer: "Encryption" },
+      { id: "q005", emoji: "🧠 + 🤖", answer: "Artificial Intelligence" },
+      { id: "q006", emoji: "🌐 + 🕸️", answer: "World Wide Web" },
+      { id: "q007", emoji: "📦 + 📦", answer: "Containers" },
+      { id: "q008", emoji: "🐛 + 🔧", answer: "Debugging" },
+      { id: "q009", emoji: "📱 + 💻", answer: "Cross Platform" },
+      { id: "q010", emoji: "💾 + 🗂️", answer: "Database" },
+      { id: "q011", emoji: "📡 + 🌐", answer: "Internet" },
+      { id: "q012", emoji: "📊 + 📈", answer: "Data Analytics" },
+      { id: "q013", emoji: "🔥 + 🦊", answer: "Firefox" },
+      { id: "q014", emoji: "🪟 + 💻", answer: "Windows OS" },
+      { id: "q015", emoji: "🍎 + 💻", answer: "Apple Mac" },
+      { id: "q016", emoji: "🤖 + 📱", answer: "Android" },
+      { id: "q017", emoji: "🔍 + 🐛", answer: "Bug Tracking" },
+      { id: "q018", emoji: "🐳 + 📦", answer: "Docker" },
+      { id: "q019", emoji: "💻 + 🧠", answer: "Machine Learning" },
+      { id: "q020", emoji: "⚡ + 💻", answer: "Fast Computing" },
+      { id: "q021", emoji: "🌍 + 🔗", answer: "Global Network" },
+      { id: "q022", emoji: "📚 + 💻", answer: "Programming" },
+      { id: "q023", emoji: "💬 + 🤖", answer: "Chatbot" },
+      { id: "q024", emoji: "🔐 + 📧", answer: "Secure Email" },
+      { id: "q025", emoji: "🗄️ + 🔍", answer: "Search Database" },
+      { id: "q026", emoji: "💻 + 📦", answer: "Software Package" },
+      { id: "q027", emoji: "📡 + 📶", answer: "Wireless Network" },
+      { id: "q028", emoji: "📱 + ☁️", answer: "Cloud Sync" },
+      { id: "q029", emoji: "🔄 + 💾", answer: "Backup" },
+      { id: "q030", emoji: "🖥️ + 🎮", answer: "PC Gaming" },
+      { id: "q031", emoji: "💻 + 🛡️", answer: "Cybersecurity" },
+      { id: "q032", emoji: "🧠 + 💾", answer: "Memory" },
+      { id: "q033", emoji: "🐧 + 💻", answer: "Linux" },
+      { id: "q034", emoji: "📊 + 💻", answer: "Data Science" },
+      { id: "q035", emoji: "🧰 + 💻", answer: "Developer Tools" },
+      { id: "q036", emoji: "🔗 + 📦", answer: "Package Manager" },
+      { id: "q037", emoji: "🧑‍💻 + ☕", answer: "Programmer" },
+      { id: "q038", emoji: "🖥️ + 🌐", answer: "Web Server" },
+      { id: "q039", emoji: "📡 + 💻", answer: "Network Computer" },
+      { id: "q040", emoji: "🧠 + 💻", answer: "Artificial Intelligence" },
+      { id: "q041", emoji: "🐍 + 💻 + 🧠", answer: "Python Programming" },
+      { id: "q042", emoji: "☁️ + 💻 + 📦", answer: "Cloud Deployment" },
+      { id: "q043", emoji: "🧑‍💻 + ☕ + 🌙", answer: "Night Coding" },
+      { id: "q044", emoji: "🐛 + 🔍 + 🔧", answer: "Bug Fixing" },
+      { id: "q045", emoji: "📱 + ☁️ + 💾", answer: "Mobile Cloud Backup" },
+      { id: "q046", emoji: "💻 + 🔐 + 🔑", answer: "Computer Security" },
+      { id: "q047", emoji: "🌐 + 🔗 + 📦", answer: "Web Package Manager" },
+      { id: "q048", emoji: "🤖 + 🧠 + 💻", answer: "AI Computing" },
+      { id: "q049", emoji: "🐳 + 📦 + ☁️", answer: "Docker Cloud" },
+      { id: "q050", emoji: "📊 + 📈 + 💻", answer: "Data Analysis" },
+      { id: "q051", emoji: "🖥️ + 🎮 + 🧑‍💻", answer: "Game Development" },
+      { id: "q052", emoji: "🐧 + 💻 + ☁️", answer: "Linux Cloud" },
+      { id: "q053", emoji: "🔐 + 📧 + 💻", answer: "Secure Email Server" },
+      { id: "q054", emoji: "🧠 + 🤖 + 💬", answer: "AI Chatbot" },
+      { id: "q055", emoji: "📦 + 🔗 + 💻", answer: "Software Package Manager" },
+      { id: "q056", emoji: "☁️ + 🔄 + 💾", answer: "Cloud Backup" },
+      { id: "q057", emoji: "📱 + 📡 + 🌐", answer: "Mobile Internet" },
+      { id: "q058", emoji: "🐙 + 🐱 + 💻", answer: "GitHub Repository" },
+      { id: "q059", emoji: "💻 + 🐛 + 🔧", answer: "Debug Code" },
+      { id: "q060", emoji: "🧑‍💻 + 🌙 + ☕", answer: "Late Night Coding" },
+      { id: "q061", emoji: "🧠 + 💾 + 💻", answer: "Computer Memory" },
+      { id: "q062", emoji: "🧑‍💻 + 📚 + 💻", answer: "Learning Programming" },
+      { id: "q063", emoji: "🔍 + 💻 + 🐛", answer: "Bug Search" },
+      { id: "q064", emoji: "🌐 + 🕸️ + 💻", answer: "Web Development" },
+      { id: "q065", emoji: "📱 + 🎮 + 🧑‍💻", answer: "Mobile Game Development" },
+      { id: "q066", emoji: "🧰 + 💻 + 🔧", answer: "Software Development Tools" },
+      { id: "q067", emoji: "📡 + 🌐 + 💻", answer: "Network Computing" },
+      { id: "q068", emoji: "☁️ + 💻 + 🔗", answer: "Cloud Integration" },
+      { id: "q069", emoji: "🤖 + 📱 + 💻", answer: "AI Mobile App" },
+      { id: "q070", emoji: "🐍 + 📚 + 💻", answer: "Learn Python" },
+      { id: "q071", emoji: "💻 + 📦 + 🔗", answer: "Software Dependencies" },
+      { id: "q072", emoji: "🐧 + 🌐 + 💻", answer: "Linux Server" },
+      { id: "q073", emoji: "🔄 + 📦 + 💻", answer: "Software Update" },
+      { id: "q074", emoji: "📊 + 💻 + 📈", answer: "Data Visualization" },
+      { id: "q075", emoji: "🧠 + 💻 + 🤖", answer: "Artificial Intelligence" },
+      { id: "q076", emoji: "🔑 + 🔐 + 💻", answer: "Computer Encryption" },
+      { id: "q077", emoji: "🧑‍💻 + 💻 + ☕", answer: "Software Developer" },
+      { id: "q078", emoji: "📱 + ☁️ + 📡", answer: "Mobile Cloud Network" },
+      { id: "q079", emoji: "💻 + 🌐 + 🔗", answer: "Internet Connection" },
+      { id: "q080", emoji: "🐳 + ☁️ + 💻", answer: "Docker Cloud Computing" },
+      { id: "q081", emoji: "🔐 + 💻", answer: "Cyber Security" },
+      { id: "q082", emoji: "🕵️ + 💻", answer: "Ethical Hacking" },
+      { id: "q083", emoji: "🔑 + 📱", answer: "Two Factor Authentication" },
+      { id: "q084", emoji: "🐟 + 📧", answer: "Phishing Attack" },
+      { id: "q085", emoji: "🔥 + 🧱", answer: "Firewall" },
+      { id: "q086", emoji: "🦠 + 💻", answer: "Computer Virus" },
+      { id: "q087", emoji: "🛡️ + 🌐", answer: "Network Security" },
+      { id: "q088", emoji: "🔑 + 🗄️", answer: "Key Management" },
+      { id: "q089", emoji: "🔒 + ☁️", answer: "Cloud Security" },
+      { id: "q090", emoji: "🕵️ + 🌐", answer: "Cyber Spy" },
+      { id: "q091", emoji: "🧑‍💻 + 🛡️", answer: "Security Engineer" },
+      { id: "q092", emoji: "📧 + 🐟 + ⚠️", answer: "Phishing Scam" },
+      { id: "q093", emoji: "🔐 + ☁️ + 💻", answer: "Secure Cloud Computing" },
+      { id: "q094", emoji: "🧑‍💻 + 🔍 + 🐛", answer: "Security Testing" },
+      { id: "q095", emoji: "💻 + 🛡️ + 🔒", answer: "Endpoint Security" },
+      { id: "q096", emoji: "🕵️ + 💻 + 🔑", answer: "Password Cracking" },
+      { id: "q097", emoji: "🛡️ + 📡 + 🌐", answer: "Network Protection" },
+      { id: "q098", emoji: "🔑 + 🔒 + 🌐", answer: "SSL Encryption" },
+      { id: "q099", emoji: "🧑‍💻 + 🕵️ + 💻", answer: "Penetration Testing" },
+      { id: "q100", emoji: "🔐 + 📡 + 🌐", answer: "Secure Network" }
     ];
+
+    const ANSWER_POOL = [...new Set(QUIZ_BANK.map((q) => q.answer))];
 
     function shuffleArray(items) {
       const copy = [...items];
@@ -480,8 +557,30 @@
       return copy;
     }
 
-    function prepareQuiz() {
-      return shuffleArray(QUESTIONS).map((q) => ({ ...q, options: shuffleArray(q.options) }));
+    function buildOptions(correctAnswer) {
+      const wrongAnswers = [];
+      const shuffledAnswers = shuffleArray(ANSWER_POOL);
+      for (let i = 0; i < shuffledAnswers.length; i++) {
+        const candidate = shuffledAnswers[i];
+        if (candidate !== correctAnswer) {
+          wrongAnswers.push(candidate);
+        }
+        if (wrongAnswers.length === 3) {
+          break;
+        }
+      }
+      return shuffleArray([correctAnswer, ...wrongAnswers]);
+    }
+
+    function prepareQuiz(count = 25) {
+      const selected = shuffleArray(QUIZ_BANK).slice(0, Math.min(count, QUIZ_BANK.length));
+      return selected.map((q) => ({
+        id: q.id,
+        emoji: q.emoji,
+        clue: "Decode this tech term from emojis.",
+        correct: q.answer,
+        options: buildOptions(q.answer)
+      }));
     }
 
     function decorateWatermarks() {
