@@ -73,4 +73,14 @@ public class AdminController {
         playerService.finalizeActivePlayers();
         return ResponseEntity.ok("Quiz ended for all players");
     }
+
+    @PostMapping("/resetPlayers")
+    public ResponseEntity<?> resetPlayers(@RequestHeader(value = "X-Admin-Secret", required = false) String secret) {
+        if (!isAdminAuthorized(secret)) {
+            return ResponseEntity.status(403).body("Unauthorized admin access");
+        }
+        playerService.resetAllPlayers();
+        quizService.resetQuiz();
+        return ResponseEntity.ok("Players list reset successfully");
+    }
 }

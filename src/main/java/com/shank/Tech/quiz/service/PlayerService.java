@@ -165,4 +165,9 @@ public class PlayerService {
         }
         return leaderboard;
     }
+
+    @Transactional
+    public void resetAllPlayers() {
+        playerRepository.deleteAllInBatch();
+    }
 }

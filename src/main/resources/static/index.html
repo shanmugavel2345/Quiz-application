@@ -999,6 +999,20 @@
         }
       }
 
+      async function resetPlayers() {
+        setBusy(true);
+        try {
+          const res = await fetch(`${API_BASE}/admin/resetPlayers`, { method: "POST", headers: { "X-Admin-Secret": secret } });
+          if (!res.ok) {
+            alert("Unable to reset player list");
+            return;
+          }
+          setPlayers([]);
+        } finally {
+          setBusy(false);
+        }
+      }
+
       return (
         <div className="container">
           <a href="#" className="back-link" onClick={onLogout}>← Logout</a>
@@ -1009,6 +1023,7 @@
             <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
               <button className="btn btn-success" onClick={startQuiz} disabled={busy}>Start Quiz</button>
               <button className="btn btn-danger" onClick={endQuiz} disabled={busy}>End Quiz</button>
+              <button className="btn btn-admin" onClick={resetPlayers} disabled={busy}>Reset Players</button>
             </div>
           </div>
 
@@ -1071,7 +1086,7 @@
 
       let content = null;
       if (screen === "home") content = <HomeJoin onJoin={handleJoin} goAdmin={() => setScreen("admin-auth")} />;
-      else if (screen === "waiting") content = <PlayerWaiting name={playerName} onStart={() => setScreen("quiz")} onEnded={() => setScreen("quiz")} />;
+      else if (screen === "waiting") content = <PlayerWaiting name={playerName} onStart={() => setScreen("quiz")} onEnded={reset} />;
       else if (screen === "quiz") content = <PlayerQuiz playerId={playerId} playerName={playerName} onExit={reset} />;
       else if (screen === "admin-auth") content = <AdminAuth onBack={reset} onAccess={(s) => { setAdminSecret(s); setScreen("admin"); }} />;
       else content = <AdminDashboard secret={adminSecret} onLogout={reset} />;

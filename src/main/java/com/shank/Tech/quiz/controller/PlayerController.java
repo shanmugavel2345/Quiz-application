@@ -7,6 +7,7 @@ import com.shank.Tech.quiz.dto.AnswerSubmitRequest;
 import com.shank.Tech.quiz.dto.ScoreUpdateRequest;
 import com.shank.Tech.quiz.entity.Player;
 import com.shank.Tech.quiz.service.PlayerService;
+import com.shank.Tech.quiz.service.QuizService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,7 @@ import java.util.List;
 public class PlayerController {
     
     private final PlayerService playerService;
+    private final QuizService quizService;
     
     @PostMapping("/join")
     public ResponseEntity<PlayerJoinResponse> joinPlayer(@RequestBody PlayerJoinRequest request) {
@@ -39,19 +41,28 @@ public class PlayerController {
     }
     
     @PostMapping("/score")
-    public ResponseEntity<Player> updateScore(@RequestBody ScoreUpdateRequest request) {
+    public ResponseEntity<?> updateScore(@RequestBody ScoreUpdateRequest request) {
+        if (!quizService.isQuizStarted()) {
+            return ResponseEntity.status(409).body("Quiz has not started yet. Wait for admin to start.");
+        }
         Player updatedPlayer = playerService.updateScore(request.getPlayerId(), request.getScoreIncrement());
         return ResponseEntity.ok(updatedPlayer);
     }
 
     @PostMapping("/answer")
-    public ResponseEntity<Player> submitAnswer(@RequestBody AnswerSubmitRequest request) {
+    public ResponseEntity<?> submitAnswer(@RequestBody AnswerSubmitRequest request) {
+        if (!quizService.isQuizStarted()) {
+            return ResponseEntity.status(409).body("Quiz has not started yet. Wait for admin to start.");
+        }
         Player updatedPlayer = playerService.submitAnswer(request.getPlayerId(), request.isCorrect());
         return ResponseEntity.ok(updatedPlayer);
     }
 
     @PostMapping("/complete")
-    public ResponseEntity<Player> completePlayerQuiz(@RequestBody PlayerCompleteRequest request) {
+    public ResponseEntity<?> completePlayerQuiz(@RequestBody PlayerCompleteRequest request) {
+        if (!quizService.isQuizStarted()) {
+            return ResponseEntity.status(409).body("Quiz has not started yet. Wait for admin to start.");
+        }
         Player updatedPlayer = playerService.markPlayerCompleted(request.getPlayerId());
         return ResponseEntity.ok(updatedPlayer);
     }
