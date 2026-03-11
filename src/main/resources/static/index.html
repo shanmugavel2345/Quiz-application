@@ -3,704 +3,476 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tech Emoji Quiz - Ultimate Battle</title>
+  <title>Tech Emoji Quiz</title>
   <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
+    :root {
+      --bg-a: #060913;
+      --bg-b: #111a34;
+      --bg-c: #0f3052;
+      --card-a: rgba(11, 20, 44, 0.8);
+      --card-b: rgba(17, 35, 70, 0.78);
+      --line: rgba(137, 191, 255, 0.34);
+      --text: #e8f1ff;
+      --muted: #a4b8da;
+      --cyan: #63edff;
+      --green: #3fda87;
+      --red: #ff5e87;
+      --shadow: 0 22px 56px rgba(0, 0, 0, 0.42);
+    }
+
     * {
       box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
       padding: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     }
 
     body {
       min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 10%, #1e2f61 0%, transparent 34%),
+        radial-gradient(circle at 85% 8%, #184067 0%, transparent 30%),
+        radial-gradient(circle at 75% 85%, #1a2f68 0%, transparent 28%),
+        linear-gradient(132deg, var(--bg-a) 0%, var(--bg-b) 48%, var(--bg-c) 100%);
       overflow-x: hidden;
     }
 
-    /* Page 1 - Team Setup */
-    .page-setup {
-      min-height: 100vh;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-      padding: 25px 20px;
-      position: relative;
-    }
-
-    /* Page 2 - Quiz Game - Subtle elegant colors */
-    .page-quiz {
-      height: 100vh;
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-      padding: 10px 15px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    /* Tech Watermark Background */
-    .watermark-bg {
+    .grid-overlay {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image:
+        linear-gradient(rgba(106, 157, 255, 0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(106, 157, 255, 0.07) 1px, transparent 1px);
+      background-size: 38px 38px;
+      animation: gridMove 14s linear infinite;
+    }
+
+    @keyframes gridMove {
+      from { transform: translateY(0); }
+      to { transform: translateY(38px); }
+    }
+
+    .watermarks {
+      position: fixed;
+      inset: 0;
       pointer-events: none;
       z-index: 0;
       overflow: hidden;
-      opacity: 0.06;
+      opacity: 0.07;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='220' viewBox='0 0 260 220'%3E%3Ctext x='16' y='54' font-size='32'%3E%F0%9F%92%BB%3C/text%3E%3Ctext x='96' y='54' font-size='31'%3E%F0%9F%A7%A0%3C/text%3E%3Ctext x='176' y='54' font-size='31'%3E%F0%9F%A4%96%3C/text%3E%3Ctext x='16' y='126' font-size='30'%3E%E2%98%81%EF%B8%8F%3C/text%3E%3Ctext x='94' y='126' font-size='30'%3E%F0%9F%90%B3%3C/text%3E%3Ctext x='174' y='126' font-size='30'%3E%E2%9A%99%EF%B8%8F%3C/text%3E%3Ctext x='16' y='198' font-size='30'%3E%F0%9F%93%8A%3C/text%3E%3Ctext x='96' y='198' font-size='30'%3E%F0%9F%94%90%3C/text%3E%3Ctext x='176' y='198' font-size='30'%3E%F0%9F%8C%90%3C/text%3E%3C/svg%3E");
+      background-size: 320px 270px;
+      background-repeat: repeat;
+      filter: saturate(0.9);
     }
 
-    .watermark-emoji {
+    .watermark {
       position: absolute;
-      font-size: 3.5rem;
+      color: rgba(146, 196, 255, 0.07);
+      font-weight: 900;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      user-select: none;
+      transform: rotate(-18deg);
+      white-space: nowrap;
+      font-size: clamp(1.5rem, 4vw, 3.6rem);
+    }
+
+    .app {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      padding: 18px;
     }
 
     .container {
-      max-width: 1400px;
+      width: 100%;
+      max-width: 1200px;
       margin: 0 auto;
-      position: relative;
-      z-index: 1;
     }
 
-    /* Headers */
-    .main-title {
+    .title {
       text-align: center;
-      font-size: 2.8rem;
-      margin-bottom: 8px;
-      color: #ffffff;
-      text-shadow: 0 4px 20px rgba(0,0,0,0.3)
+      font-size: clamp(2rem, 4.5vw, 3rem);
+      margin-bottom: 10px;
+      font-weight: 800;
     }
 
-    .main-title span {
-      background: linear-gradient(90deg, #f9d423, #ff4e50, #f9d423);
-      background-size: 200% 100%;
+    .title span {
+      background: linear-gradient(90deg, #63edff, #6ea5ff, #94a0ff);
+      color: transparent;
       -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
     .subtitle {
       text-align: center;
-      color: rgba(255,255,255,0.9);
-      margin-bottom: 20px;
-      font-size: 1.1rem;
-    }
-
-    /* Cards */
-    .card {
-      background: rgba(255, 255, 255, 0.97);
-      border-radius: 24px;
-      padding: 25px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
-    }
-
-    .card h3 {
-      margin: 0 0 14px;
-      color: #764ba2;
-      font-size: 1.3rem;
-    }
-
-    /* Attractive Name Input Box */
-    .name-input-wrapper {
-      position: relative;
-      margin-bottom: 14px;
-      border-radius: 16px;
-      padding: 3px;
-      background: linear-gradient(135deg, #667eea, #764ba2, #f093fb, #ff6b6b, #feca57);
-      background-size: 300% 300%;
-      animation: gradient-border 4s ease infinite;
-    }
-
-    @keyframes gradient-border {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    .name-input-wrapper textarea {
-      width: 100%;
-      border-radius: 14px;
-      border: none;
-      padding: 14px;
-      font-size: 1rem;
-      background: white;
-      resize: vertical;
-      min-height: 100px;
-    }
-
-    .name-input-wrapper textarea:focus {
-      outline: none;
-    }
-
-    input {
-      width: 100%;
-      border-radius: 14px;
-      border: 3px solid #e0e7ff;
-      padding: 12px;
-      font-size: 1rem;
-      margin-bottom: 10px;
-      transition: all 0.3s;
-    }
-
-    input:focus {
-      outline: none;
-      border-color: #764ba2;
-      box-shadow: 0 0 15px rgba(118, 75, 162, 0.3);
-    }
-
-    .row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    /* Buttons */
-    .btn {
-      width: 100%;
-      border-radius: 14px;
-      border: none;
-      padding: 14px 20px;
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      margin-bottom: 10px;
-      transition: all 0.3s;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-    }
-
-    .btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      color: white;
-    }
-
-    .btn-success {
-      background: linear-gradient(135deg, #11998e, #38ef7d);
-      color: white;
-    }
-
-    .btn-danger {
-      background: linear-gradient(135deg, #eb3349, #f45c43);
-      color: white;
-    }
-
-    .btn-gold {
-      background: linear-gradient(135deg, #f9d423, #ff4e50);
-      color: white;
-      font-size: 1.2rem;
-      padding: 18px;
-    }
-
-    .btn-start {
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      color: white;
-      font-size: 1.3rem;
-      padding: 16px 35px;
-      width: auto;
-    }
-
-    .btn-action {
-      width: auto;
-      min-width: 140px;
-      margin: 0 6px;
-      padding: 12px 18px;
+      color: var(--muted);
+      margin-bottom: 18px;
       font-size: 0.95rem;
     }
 
-    /* Teams Grid */
-    .teams-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 14px;
-      margin-top: 16px;
+    .card {
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: linear-gradient(150deg, var(--card-a), var(--card-b));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(9px);
+      padding: 18px;
+      transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
     }
 
-    .team-card {
-      background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
-      border-radius: 16px;
-      padding: 14px;
-      border: 2px solid rgba(255, 255, 255, 0.5);
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(160, 211, 255, 0.58);
+      box-shadow: 0 26px 64px rgba(0, 0, 0, 0.48);
     }
 
-    .team-card:nth-child(2) {
-      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    .row-gap { margin-bottom: 12px; }
+    .center { text-align: center; }
+
+    .input {
+      width: 100%;
+      border: 1px solid rgba(128, 175, 255, 0.42);
+      background: rgba(10, 18, 37, 0.8);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 0.96rem;
+      outline: none;
     }
 
-    .team-card:nth-child(3) {
-      background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    .btn {
+      border: 0;
+      border-radius: 12px;
+      padding: 11px 14px;
+      font-size: 0.95rem;
+      font-weight: 800;
+      cursor: pointer;
+      color: #091221;
+      transition: transform 0.2s ease, filter 0.2s ease;
     }
 
-    .team-card:nth-child(4) {
-      background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%);
-    }
+    .btn:hover { transform: translateY(-2px); filter: brightness(1.06); }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
-    .team-card h4 {
-      margin: 0 0 10px;
-      color: #4a148c;
-      font-size: 1.1rem;
-    }
+    .btn-primary { background: linear-gradient(135deg, #66beff, #66f1ef); }
+    .btn-success { background: linear-gradient(135deg, #53de92, #9dffc1); }
+    .btn-danger { background: linear-gradient(135deg, #ff628f, #ff8ea6); }
+    .btn-admin { background: linear-gradient(135deg, #8ea2ff, #81d4ff); }
 
-    .members-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-
-    .member-tag {
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      color: white;
-      font-size: 0.8rem;
-      padding: 5px 12px;
-      border-radius: 20px;
-      font-weight: 600;
-    }
-
-    .info-text {
-      color: #6b7280;
+    .pill {
+      border-radius: 999px;
+      padding: 8px 12px;
+      border: 1px solid rgba(130, 178, 255, 0.35);
+      background: rgba(9, 17, 36, 0.75);
       font-size: 0.9rem;
-      margin-top: 10px;
-      text-align: center;
+      font-weight: 800;
+      color: var(--text);
     }
 
-    /* Quiz Page - Compact Full Screen Layout */
-    .quiz-fullscreen {
-      display: grid;
-      grid-template-columns: 1fr 280px;
-      gap: 15px;
-      height: calc(100vh - 70px);
+    .timer-pill {
+      border: 0;
+      background: linear-gradient(135deg, #74beff, #5ff1ff);
+      color: #0a1423;
     }
+
+    .timer-danger {
+      background: linear-gradient(135deg, #ff7e9f, #ff6285);
+      animation: pulse 0.7s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .quiz-main { min-height: 440px; }
+    .quiz-head { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+    .emoji {
+      font-size: clamp(3.8rem, 12vw, 6rem);
+      text-align: center;
+      margin: 14px 0;
+      line-height: 1.1;
+    }
+
+    .emoji-animate {
+      animation: emojiReveal 0.48s cubic-bezier(0.18, 0.84, 0.32, 1) both;
+    }
+
+    @keyframes emojiReveal {
+      from { opacity: 0; transform: translateY(10px) scale(0.92) rotate(-3deg); }
+      to { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
+    }
+
+    .clue { text-align: center; color: #d2e5ff; margin-bottom: 14px; }
+
+    .progress-wrap {
+      margin: 6px 0 14px;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(85, 130, 197, 0.24);
+      overflow: hidden;
+      border: 1px solid rgba(130, 172, 240, 0.28);
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #61d9ff, #6bc8ff, #84ffba);
+      transition: width 0.35s ease;
+    }
+
+    .timer-ring {
+      width: 74px;
+      height: 74px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: conic-gradient(var(--timer-color, #53e38e) calc(var(--progress, 100) * 1%), rgba(109, 156, 230, 0.25) 0);
+      position: relative;
+      box-shadow: inset 0 0 0 1px rgba(151, 195, 255, 0.26);
+      transition: background 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .timer-ring::after {
+      content: "";
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: rgba(8, 18, 39, 0.95);
+      border: 1px solid rgba(128, 171, 237, 0.28);
+      position: absolute;
+    }
+
+    .timer-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      font-size: 0.84rem;
+      font-weight: 900;
+      color: #dbedff;
+      line-height: 1;
+    }
+
+    .timer-content small {
+      display: block;
+      font-size: 0.58rem;
+      letter-spacing: 0.08em;
+      color: #9ec5f2;
+      margin-bottom: 3px;
+    }
+
+    .timer-good { --timer-color: #54e48f; }
+    .timer-warn { --timer-color: #ffd15b; }
+    .timer-danger {
+      --timer-color: #ff617e;
+      animation: pulse 0.7s infinite;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .option {
+      border-radius: 12px;
+      border: 1px solid rgba(142, 186, 255, 0.4);
+      background: linear-gradient(135deg, rgba(13, 25, 53, 0.92), rgba(18, 43, 84, 0.9));
+      color: var(--text);
+      padding: 12px;
+      text-align: left;
+      font-size: 0.94rem;
+      font-weight: 700;
+      min-height: 56px;
+      cursor: pointer;
+      transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+    }
+
+    .option:hover { transform: translateY(-2px); }
+    .option:active { transform: scale(0.98); }
+    .option-correct { background: linear-gradient(135deg, rgba(24, 93, 57, 0.95), rgba(44, 133, 82, 0.95)); }
+    .option-wrong { background: linear-gradient(135deg, rgba(117, 24, 52, 0.95), rgba(155, 31, 67, 0.95)); }
+    .blink-correct { animation: blinkGreen 0.22s linear 6; }
+    .blink-wrong { animation: blinkRed 0.22s linear 6; }
+
+    @keyframes blinkGreen {
+      0%,100% { filter: brightness(1); }
+      50% { filter: brightness(1.35); }
+    }
+
+    @keyframes blinkRed {
+      0%,100% { filter: brightness(1); }
+      50% { filter: brightness(1.25); }
+    }
+
+    .status-line { margin-top: 12px; text-align: center; color: var(--muted); min-height: 22px; }
+    .back-link { color: #b8d7ff; text-decoration: none; display: inline-block; margin-bottom: 8px; font-weight: 700; }
+
+    .split { display: grid; gap: 14px; grid-template-columns: 1fr 1fr; }
+
+    .table-wrap { overflow-x: auto; }
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 620px;
+    }
+
+    .admin-table th,
+    .admin-table td {
+      border-bottom: 1px solid rgba(138, 184, 255, 0.3);
+      padding: 10px 8px;
+      text-align: left;
+      font-size: 0.92rem;
+    }
+
+    .admin-table th { color: #bde5ff; font-size: 0.88rem; text-transform: uppercase; }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .result-card {
+      border: 1px solid rgba(136, 184, 255, 0.35);
+      border-radius: 12px;
+      background: rgba(9, 18, 39, 0.7);
+      padding: 12px;
+    }
+
+    .result-card .label { color: var(--muted); font-size: 0.85rem; }
+    .result-card .value { font-size: 1.3rem; font-weight: 900; margin-top: 4px; }
+
+    .result-enter {
+      animation: fadeSlideIn 0.38s ease both;
+    }
+
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .rank-list { margin-top: 12px; display: grid; gap: 8px; }
+    .rank-row {
+      border: 1px solid rgba(136, 184, 255, 0.35);
+      border-radius: 10px;
+      background: rgba(9, 18, 39, 0.7);
+      padding: 10px;
+      display: grid;
+      grid-template-columns: 80px 1fr 80px;
+      gap: 8px;
+      align-items: center;
+      animation: fadeSlideIn 0.35s ease both;
+    }
+
+    .rank-row.top-rank {
+      border-color: rgba(255, 218, 115, 0.6);
+      background: linear-gradient(130deg, rgba(43, 41, 12, 0.72), rgba(74, 62, 20, 0.64));
+      animation: topGlow 2.1s ease-in-out infinite;
+    }
+
+    @keyframes topGlow {
+      0%, 100% { box-shadow: 0 0 0 rgba(255, 223, 129, 0.15); }
+      50% { box-shadow: 0 0 20px rgba(255, 223, 129, 0.24); }
+    }
+
+    .spinner {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 4px solid rgba(116, 168, 244, 0.25);
+      border-top-color: var(--cyan);
+      margin: 14px auto;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
 
     @media (max-width: 900px) {
-      .quiz-fullscreen {
-        grid-template-columns: 1fr;
-        height: auto;
+      .split { grid-template-columns: 1fr; }
+      .options-grid { grid-template-columns: 1fr; }
+      .result-grid { grid-template-columns: 1fr; }
+      .app { padding: 12px; }
+      .quiz-main { padding: 14px; }
+      .quiz-head { align-items: center; }
+      .timer-ring { width: 68px; height: 68px; }
+      .timer-ring::after { width: 52px; height: 52px; }
+      .emoji { font-size: clamp(3.9rem, 18vw, 5.8rem); }
+    }
+
+    @media (max-width: 580px) {
+      .card {
+        border-radius: 16px;
+        padding: 14px;
       }
-    }
 
-    .quiz-main {
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 20px;
-      padding: 15px 20px;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .question-badge {
-      display: inline-block;
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      color: white;
-      padding: 8px 25px;
-      border-radius: 25px;
-      font-weight: 700;
-      font-size: 1rem;
-      margin-bottom: 8px;
-    }
-
-    .team-playing-header {
-      color: #a8dadc;
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin-bottom: 6px;
-    }
-
-    /* Team Members Display - Compact */
-    .team-members-display {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-
-    .member-badge {
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      color: white;
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-weight: 600;
-      font-size: 0.85rem;
-    }
-
-    .emoji-display {
-      font-size: 5rem;
-      margin: 12px 0;
-      line-height: 1.2;
-      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3));
-    }
-
-    .icon-display {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 15px;
-      margin: 15px 0;
-    }
-
-    .icon-display img {
-      width: 100px;
-      height: 100px;
-      filter: drop-shadow(0 4px 15px rgba(255,255,255,0.3));
-    }
-
-    /* Compact Circular Clock Timer */
-    .clock-container {
-      display: flex;
-      justify-content: center;
-      margin: 10px 0;
-    }
-
-    .clock {
-      position: relative;
-      width: 100px;
-      height: 100px;
-    }
-
-    .clock-bg {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #1a1a2e, #16213e);
-      border: 4px solid #4a5568;
-      box-shadow: 0 0 20px rgba(0,0,0,0.4);
-    }
-
-    .clock-progress {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
-
-    .clock-progress svg {
-      transform: rotate(-90deg);
-    }
-
-    .clock-progress circle {
-      fill: none;
-      stroke-width: 8;
-      stroke-linecap: round;
-    }
-
-    .clock-progress .bg-circle {
-      stroke: #2d3748;
-    }
-
-    .clock-progress .progress-circle {
-      transition: stroke-dashoffset 1s linear;
-    }
-
-    .clock-time {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 2rem;
-      font-weight: 900;
-      color: #ffffff;
-    }
-
-    .clock-label {
-      color: #a0aec0;
-      font-size: 0.8rem;
-      text-align: center;
-      margin-top: 5px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .timer-container {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 20px;
-      position: relative;
-      margin: 20px 0;
-    }
-
-    .skip-button-wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .skip-timer-btn {
-      background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
-      border: 2px solid #ff4757;
-      border-radius: 12px;
-      padding: 12px 20px;
-      font-size: 1rem;
-      font-weight: bold;
-      cursor: pointer;
-      color: white;
-      box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      min-width: 100px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .skip-timer-btn:hover:not(:disabled) {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 25px rgba(255, 107, 107, 0.6);
-      background: linear-gradient(135deg, #ff5252 0%, #d32f2f 100%);
-    }
-
-    .skip-timer-btn:active:not(:disabled) {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
-    }
-
-    .skip-timer-btn:disabled {
-      background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
-      border-color: #6b7280;
-      cursor: not-allowed;
-      opacity: 0.5;
-      box-shadow: none;
-    }
-
-    .answer-text {
-      font-size: 1.5rem;
-      font-weight: 800;
-      color: #a8dadc;
-      min-height: 35px;
-      margin: 10px 0;
-    }
-
-    .actions-row {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    .wrong-popup {
-      margin-top: 12px;
-      background: linear-gradient(135deg, #ff6b6b, #ee5a5a);
-      border-radius: 15px;
-      padding: 12px 20px;
-      color: white;
-      font-weight: 700;
-      font-size: 1.1rem;
-    }
-
-    /* Wait for Start - Compact */
-    .wait-start {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .wait-start h2 {
-      color: #f4a261;
-      font-size: 1.5rem;
-      margin-bottom: 15px;
-    }
-
-    /* Scoreboard - Compact */
-    .scoreboard {
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 20px;
-      padding: 15px;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .scoreboard h3 {
-      color: #f4a261;
-      margin: 0 0 12px;
-      font-size: 1.2rem;
-      text-align: center;
-    }
-
-    .score-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 12px;
-      margin-bottom: 8px;
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: white;
-    }
-
-    .score-item.leading {
-      background: rgba(244, 162, 97, 0.25);
-      border-color: #f4a261;
-    }
-
-    .score-item .team-name {
-      font-weight: 600;
-      font-size: 0.95rem;
-    }
-
-    .score-item .score {
-      font-size: 1.4rem;
-      font-weight: 800;
-      color: #f4a261;
-    }
-
-    .winner-banner {
-      margin-top: 12px;
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      border-radius: 15px;
-      padding: 15px;
-      text-align: center;
-      color: white;
-    }
-
-    .winner-banner h4 {
-      margin: 0;
-      font-size: 1.3rem;
-    }
-
-    .end-game-btn {
-      margin-top: auto;
-      padding-top: 10px;
-    }
-
-    .end-game-btn .btn {
-      margin-bottom: 8px;
-    }
-
-    /* Party Blast - Only from bottom corners */
-    .burst-container {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 9998;
-    }
-
-    .burst-particle {
-      position: absolute;
-      border-radius: 50%;
-      animation: burst-up ease-out forwards;
-    }
-
-    @keyframes burst-up {
-      0% { opacity: 1; transform: translate(0, 0) scale(1); }
-      100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.2); }
-    }
-
-    /* Chatbot - Small bottom right corner */
-    .chatbot-popup {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      color: white;
-      padding: 12px 18px;
-      border-radius: 15px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      text-align: center;
-      z-index: 9000;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-      animation: chatbot-appear 0.4s ease-out, chatbot-disappear 0.4s ease-in 2.5s forwards;
-      max-width: 200px;
-    }
-
-    @keyframes chatbot-appear {
-      from { transform: translateY(20px) scale(0.8); opacity: 0; }
-      to { transform: translateY(0) scale(1); opacity: 1; }
-    }
-
-    @keyframes chatbot-disappear {
-      from { transform: translateY(0) scale(1); opacity: 1; }
-      to { transform: translateY(20px) scale(0.8); opacity: 0; }
-    }
-
-    .chatbot-popup .bot-icon {
-      font-size: 1.5rem;
-      display: block;
-      margin-bottom: 5px;
+      .title { margin-top: 2px; }
+      .quiz-main { min-height: 470px; }
+      .btn,
+      .option {
+        width: 100%;
+      }
+      .rank-row {
+        grid-template-columns: 60px 1fr 60px;
+      }
     }
   </style>
 </head>
 <body>
+  <div class="grid-overlay"></div>
+  <div id="watermarks" class="watermarks"></div>
   <div id="root"></div>
 
   <script type="text/babel">
     const { useEffect, useMemo, useRef, useState } = React;
 
-    // Tech Quiz - 25 Questions (shuffled, no repeats)
-    const TECH_QUIZ = [
-      { icon: "https://cdn.simpleicons.org/github/white", answer: "GitHub" },
-      { icon: "https://cdn.simpleicons.org/docker/2496ED", answer: "Docker" },
-      { icon: "https://cdn.simpleicons.org/kubernetes/326CE5", answer: "Kubernetes" },
-      { emoji: "🌐 + 🕸️", answer: "Internet / Web" },
-      { emoji: "☁️ + 🖥️", answer: "Cloud Computing" },
-      { emoji: "🅰️ + ☁️", answer: "AWS" },
-      { emoji: "🟦 + ☁️", answer: "Microsoft Azure" },
-      { emoji: "🔍 + 📊", answer: "ELK Stack / Elasticsearch" },
-      { icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg", answer: "Linux" },
-      { icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg", answer: "Java" },
-      { emoji: "📦 + 🔄", answer: "CI/CD" },
-      { emoji: "🧪 + 🤖", answer: "Automation Testing" },
-      { emoji: "🔒 + ☁️", answer: "Cloud Security" },
-      { emoji: "📊 + 📈", answer: "Monitoring / Metrics" },
-      { emoji: "🚀 + 💻", answer: "Deployment" },
-      { emoji: "🐍 + 💻", answer: "Python" },
-      { emoji: "☕ + 🌱", answer: "Spring Boot" },
-      { emoji: "🔁 + 🔧", answer: "DevOps" },
-      { emoji: "📦 + 🐳 + ☁️", answer: "Container Deployment" },
-      { emoji: "📜 + ⚙️", answer: "Configuration File" },
-      { emoji: "🐙 + 🌿", answer: "Git Branch" },
-      { emoji: "🧱 + ☁️", answer: "Infrastructure as Code" },
-      { emoji: "🔑 + 🔐", answer: "Authentication" },
-      { emoji: "📡 + 🌐", answer: "API" },
-      { emoji: "💾 + 🗄️", answer: "Database" }
+    const API_BASE = "";
+    const QUESTION_SECONDS = 15;
+    const POLL_MS = 3000;
+
+    const QUESTIONS = [
+      { emoji: "☁️", clue: "The remote storage we all use.", correct: "Cloud", options: ["Cloud", "Server Room", "Database", "Local Disk"] },
+      { emoji: "🐭", clue: "Not the animal, the clicker.", correct: "Mouse", options: ["Mouse", "Keyboard", "Touchpad", "Stylus"] },
+      { emoji: "🕸️ 🌐", clue: "The world wide...", correct: "Web / Internet", options: ["Web / Internet", "Network Cable", "Data Center", "Router"] },
+      { emoji: "🔋 💻", clue: "What you plug in when it's at 1%.", correct: "Charger", options: ["Charger", "Power Bank", "Battery", "Adapter"] },
+      { emoji: "🧱 🔥", clue: "A security barrier for networks.", correct: "Firewall", options: ["Firewall", "Antivirus", "VPN", "Encryption"] },
+      { emoji: "🦷 🔵", clue: "Wireless connection for headphones.", correct: "Bluetooth", options: ["Bluetooth", "WiFi", "NFC", "Infrared"] },
+      { emoji: "💾", clue: "The old save icon.", correct: "Floppy Disk", options: ["Floppy Disk", "Hard Drive", "SSD", "Memory Card"] },
+      { emoji: "🛰️ 📍", clue: "How your phone knows where you are.", correct: "GPS", options: ["GPS", "WiFi Tracking", "Bluetooth Tracking", "Satellite TV"] },
+      { emoji: "🐍", clue: "Popular programming language.", correct: "Python", options: ["Python", "Ruby", "JavaScript", "Go"] },
+      { emoji: "☕", clue: "Programming language and drink.", correct: "Java", options: ["Java", "Kotlin", "Swift", "Scala"] },
+      { emoji: "🍎", clue: "Tech giant from Cupertino.", correct: "Apple", options: ["Apple", "Microsoft", "Google", "Samsung"] },
+      { emoji: "🐧", clue: "Mascot for open-source OS.", correct: "Linux", options: ["Linux", "Unix", "Windows", "Solaris"] },
+      { emoji: "🖼️ 🪟", clue: "OS most PCs run on.", correct: "Windows", options: ["Windows", "Linux", "macOS", "ChromeOS"] },
+      { emoji: "🤖", clue: "OS for most non-Apple phones.", correct: "Android", options: ["Android", "iOS", "HarmonyOS", "Windows Phone"] },
+      { emoji: "🛒 📦", clue: "E-commerce giant.", correct: "Amazon", options: ["Amazon", "eBay", "Flipkart", "Alibaba"] },
+      { emoji: "🎥 🟦", clue: "Video conferencing tool.", correct: "Zoom", options: ["Zoom", "Skype", "Google Meet", "Teams"] },
+      { emoji: "1 + 1 (Binary)", clue: "Binary math time.", correct: "10", options: ["10", "2", "11", "01"] },
+      { emoji: "PNT", clue: "Expand this short form.", correct: "Point", options: ["Point", "Pixel", "Path", "Port"] },
+      { emoji: "404", clue: "Classic web status meaning.", correct: "Not Found", options: ["Not Found", "Server Error", "Timeout", "Forbidden"] },
+      { emoji: "I / O", clue: "Common systems term.", correct: "Input / Output", options: ["Input / Output", "Internal Operation", "Internet Output", "Input Order"] },
+      { emoji: "API", clue: "Expand API.", correct: "Application Programming Interface", options: ["Application Programming Interface", "Advanced Program Index", "Application Process Integration", "Automated Program Interface"] },
+      { emoji: "UI / UX", clue: "Expand UI / UX.", correct: "User Interface / User Experience", options: ["User Interface / User Experience", "Universal Internet Extension", "User Integration Engine", "Unified Interface Experience"] },
+      { emoji: "RAM", clue: "Expand RAM.", correct: "Random Access Memory", options: ["Random Access Memory", "Read Access Module", "Rapid Application Memory", "Runtime Access Method"] },
+      { emoji: "CPU", clue: "Expand CPU.", correct: "Central Processing Unit", options: ["Central Processing Unit", "Computer Processing Utility", "Core Program Unit", "Central Program Utility"] },
+      { emoji: "URL", clue: "Expand URL.", correct: "Uniform Resource Locator", options: ["Uniform Resource Locator", "Universal Resource Link", "User Reference Link", "Unified Routing Layer"] }
     ];
 
-    const WRONG_MESSAGES = [
-      "🎉 Amazing teamwork! You'll get the next one!",
-      "💪 Don't give up! Champions never quit!",
-      "⭐ So close! Keep that energy going!",
-      "🚀 Great attempt! Next one is yours!",
-      "🔥 Keep the fire burning! You've got this!",
-      "🌟 Brilliant effort! Victory is coming!",
-      "💫 Almost there! Stay focused!",
-      "🎯 Nice try! The trophy awaits!"
-    ];
-
-    const BURST_COLORS = [
-      '#667eea', '#764ba2', '#f093fb', '#f4a261', '#e9c46a',
-      '#2a9d8f', '#e76f51', '#a8dadc', '#457b9d', '#1d3557'
-    ];
-
-    const WATERMARK_EMOJIS = ['💻', '🐍', '☁️', '🐳', '⚛️', '🚀', '🔧', '📱', '🌐', '🤖', '🔐', '📊', '🐙', '☕', '🦀', '⚡'];
-
-    function shuffleArray(arr) {
-      const copy = [...arr];
+    function shuffleArray(items) {
+      const copy = [...items];
       for (let i = copy.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [copy[i], copy[j]] = [copy[j], copy[i]];
@@ -708,578 +480,607 @@
       return copy;
     }
 
-    function splitTeams(names, teamCount, membersPerTeam) {
-      const shuffled = shuffleArray(names);
-      const teams = Array.from({ length: teamCount }, (_, idx) => ({
-        name: `Team ${idx + 1}`,
-        members: []
-      }));
-      
-      for (let i = 0; i < shuffled.length && i < teamCount * membersPerTeam; i++) {
-        teams[i % teamCount].members.push(shuffled[i]);
+    function prepareQuiz() {
+      return shuffleArray(QUESTIONS).map((q) => ({ ...q, options: shuffleArray(q.options) }));
+    }
+
+    function decorateWatermarks() {
+      const root = document.getElementById("watermarks");
+      if (!root) return;
+      root.innerHTML = "";
+      for (let i = 0; i < 6; i++) {
+        const mark = document.createElement("div");
+        mark.className = "watermark";
+        mark.textContent = "";
+        mark.style.left = "-9999px";
+        root.appendChild(mark);
       }
-      return teams;
     }
 
-    // Watermark Background Component
-    function WatermarkBackground() {
-      const emojis = useMemo(() => {
-        const items = [];
-        for (let i = 0; i < 25; i++) {
-          items.push({
-            id: i,
-            emoji: WATERMARK_EMOJIS[i % WATERMARK_EMOJIS.length],
-            left: Math.random() * 100,
-            top: Math.random() * 100,
-            size: 2.5 + Math.random() * 2
-          });
-        }
-        return items;
-      }, []);
+    const soundMap = {
+      start: "/sounds/start.mp3",
+      correct: "/sounds/correct-chime.mp3",
+      wrong: "/sounds/wrong-buzzer.mp3",
+      timer: "/sounds/timer.mp3",
+      end: "/sounds/end.mp3",
+      countdown: "/sounds/countdown-beep.mp3"
+    };
 
-      return (
-        <div className="watermark-bg">
-          {emojis.map(e => (
-            <span
-              key={e.id}
-              className="watermark-emoji"
-              style={{
-                left: `${e.left}%`,
-                top: `${e.top}%`,
-                fontSize: `${e.size}rem`
-              }}
-            >
-              {e.emoji}
-            </span>
-          ))}
-        </div>
-      );
+    const soundCache = {};
+    Object.keys(soundMap).forEach((key) => {
+      const a = new Audio(soundMap[key]);
+      a.preload = "auto";
+      soundCache[key] = a;
+    });
+
+    let audioUnlocked = false;
+    let audioCtx = null;
+    const activeLoops = {};
+    const fallbackLoops = {};
+
+    function unlockAudio() {
+      if (audioUnlocked) return;
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (Ctx) {
+        audioCtx = new Ctx();
+        if (audioCtx.state === "suspended") {
+          audioCtx.resume().catch(() => {});
+        }
+      }
+      audioUnlocked = true;
     }
 
-    // Party Blast - Only from bottom left and right corners
-    function PartyBlast({ active }) {
-      const [particles, setParticles] = useState({ leftBurst: [], rightBurst: [] });
-
-      useEffect(() => {
-        if (!active) {
-          setParticles({ leftBurst: [], rightBurst: [] });
-          return;
-        }
-
-        const leftBurst = [];
-        for (let i = 0; i < 80; i++) {
-          const angle = -Math.PI / 4 + Math.random() * Math.PI / 2;
-          const distance = 200 + Math.random() * 600;
-          leftBurst.push({
-            id: `lb-${i}`,
-            color: BURST_COLORS[Math.floor(Math.random() * BURST_COLORS.length)],
-            size: 10 + Math.random() * 20,
-            tx: Math.cos(angle) * distance,
-            ty: -Math.abs(Math.sin(angle) * distance),
-            delay: Math.random() * 0.5,
-            duration: 1 + Math.random() * 1.5
-          });
-        }
-
-        const rightBurst = [];
-        for (let i = 0; i < 80; i++) {
-          const angle = Math.PI - Math.PI / 4 + Math.random() * Math.PI / 2;
-          const distance = 200 + Math.random() * 600;
-          rightBurst.push({
-            id: `rb-${i}`,
-            color: BURST_COLORS[Math.floor(Math.random() * BURST_COLORS.length)],
-            size: 10 + Math.random() * 20,
-            tx: Math.cos(angle) * distance,
-            ty: -Math.abs(Math.sin(angle) * distance),
-            delay: Math.random() * 0.5,
-            duration: 1 + Math.random() * 1.5
-          });
-        }
-
-        setParticles({ leftBurst, rightBurst });
-        const timer = setTimeout(() => setParticles({ leftBurst: [], rightBurst: [] }), 4000);
-        return () => clearTimeout(timer);
-      }, [active]);
-
-      if (!particles.leftBurst.length) return null;
-
-      return (
-        <div className="burst-container">
-          {particles.leftBurst.map(p => (
-            <div
-              key={p.id}
-              className="burst-particle"
-              style={{
-                left: 0,
-                bottom: 0,
-                width: p.size,
-                height: p.size,
-                background: p.color,
-                '--tx': `${p.tx}px`,
-                '--ty': `${p.ty}px`,
-                animationDelay: `${p.delay}s`,
-                animationDuration: `${p.duration}s`
-              }}
-            />
-          ))}
-          {particles.rightBurst.map(p => (
-            <div
-              key={p.id}
-              className="burst-particle"
-              style={{
-                right: 0,
-                left: 'auto',
-                bottom: 0,
-                width: p.size,
-                height: p.size,
-                background: p.color,
-                '--tx': `${p.tx}px`,
-                '--ty': `${p.ty}px`,
-                animationDelay: `${p.delay}s`,
-                animationDuration: `${p.duration}s`
-              }}
-            />
-          ))}
-        </div>
-      );
+    function beep(freq, duration, type = "sine", volume = 0.07) {
+      if (!audioCtx) return;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.value = freq;
+      gain.gain.value = volume;
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration);
     }
 
-    // Compact Circular Clock Timer
-    function ClockTimer({ seconds, maxSeconds }) {
-      const radius = 40;
-      const circumference = 2 * Math.PI * radius;
-      const progress = (seconds / maxSeconds) * circumference;
+    function fallbackSound(kind) {
+      unlockAudio();
+      if (!audioCtx) return;
+      if (kind === "correct") {
+        beep(780, 0.08, "triangle", 0.08);
+        setTimeout(() => beep(980, 0.1, "triangle", 0.08), 90);
+      } else if (kind === "wrong") {
+        beep(220, 0.2, "sawtooth", 0.09);
+        setTimeout(() => beep(170, 0.18, "square", 0.08), 120);
+      } else if (kind === "timer") {
+        beep(180, 0.2, "square", 0.08);
+      } else if (kind === "countdown" || kind === "countdownTick") {
+        beep(940, 0.09, "square", 0.05);
+      } else if (kind === "end") {
+        beep(520, 0.1, "triangle", 0.08);
+        setTimeout(() => beep(660, 0.1, "triangle", 0.08), 110);
+        setTimeout(() => beep(780, 0.13, "triangle", 0.08), 220);
+      } else {
+        beep(440, 0.1, "sine", 0.08);
+      }
+    }
 
-      const getColor = () => {
-        if (seconds <= 3) return '#ef4444';
-        if (seconds <= 7) return '#f59e0b';
-        return '#a8dadc';
-      };
+    function stopFallbackLoop(kind) {
+      if (fallbackLoops[kind]) {
+        clearInterval(fallbackLoops[kind]);
+        delete fallbackLoops[kind];
+      }
+    }
+
+    function startFallbackLoop(kind) {
+      if (kind !== "countdown") return;
+      stopFallbackLoop(kind);
+      fallbackLoops[kind] = setInterval(() => fallbackSound("countdownTick"), 260);
+    }
+
+    function stopLoopSound(kind) {
+      stopFallbackLoop(kind);
+      if (activeLoops[kind]) {
+        activeLoops[kind].pause();
+        activeLoops[kind].currentTime = 0;
+        delete activeLoops[kind];
+      }
+    }
+
+    function playLoopSound(kind) {
+      if (activeLoops[kind]) return;
+      const src = soundMap[kind];
+      if (!src) return;
+      unlockAudio();
+      const loopAudio = new Audio(src);
+      loopAudio.loop = true;
+      loopAudio.volume = 0.35;
+      activeLoops[kind] = loopAudio;
+      const playPromise = loopAudio.play();
+      if (playPromise && typeof playPromise.catch === "function") {
+        playPromise.catch(() => {
+          delete activeLoops[kind];
+          startFallbackLoop(kind);
+        });
+      }
+    }
+
+    function playSound(kind) {
+      const src = soundMap[kind];
+      if (!src) return;
+      unlockAudio();
+      const audio = soundCache[kind] || new Audio(src);
+      audio.currentTime = 0;
+      audio.volume = 0.7;
+      const playPromise = audio.play();
+      if (playPromise && typeof playPromise.catch === "function") {
+        playPromise.catch(() => fallbackSound(kind));
+      }
+    }
+
+    function HomeJoin({ onJoin, goAdmin }) {
+      const [name, setName] = useState("");
+      const [loading, setLoading] = useState(false);
+
+      async function handleJoin() {
+        if (!name.trim()) return;
+        setLoading(true);
+        try {
+          const res = await fetch(`${API_BASE}/api/player/join`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: name.trim() })
+          });
+          const data = await res.json();
+          onJoin(data.playerId, data.name || name.trim());
+        } catch (e) {
+          alert("Unable to join right now.");
+          setLoading(false);
+        }
+      }
 
       return (
-        <div className="clock-container">
-          <div className="clock">
-            <div className="clock-bg" />
-            <div className="clock-progress">
-              <svg width="100" height="100">
-                <circle className="bg-circle" cx="50" cy="50" r={radius} />
-                <circle
-                  className="progress-circle"
-                  cx="50"
-                  cy="50"
-                  r={radius}
-                  style={{ stroke: getColor() }}
-                  strokeDasharray={circumference}
-                  strokeDashoffset={circumference - progress}
-                />
-              </svg>
+        <div className="container">
+          <h1 className="title">⚡ <span>Tech Emoji Quiz</span></h1>
+          <p className="subtitle">Enter your name to join</p>
+          <div className="card" style={{ maxWidth: "560px", margin: "0 auto" }}>
+            <div className="row-gap">
+              <input className="input" value={name} onChange={(e) => setName(e.target.value)} placeholder="Player name" />
             </div>
-            <div className="clock-time" style={{ color: seconds <= 3 ? '#ef4444' : '#ffffff' }}>
-              {seconds}
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    // Small Chatbot Popup - Bottom Right
-    function ChatbotPopup({ teamName, visible }) {
-      if (!visible) return null;
-      return (
-        <div className="chatbot-popup">
-          <span className="bot-icon">🤖</span>
-          {teamName}, get ready!<br />
-          <span style={{ fontSize: '0.8rem', opacity: 0.9 }}>You're up next!</span>
-        </div>
-      );
-    }
-
-    // Page 1: Team Setup
-    function TeamSetupPage({ onStartQuiz }) {
-      const [nameInput, setNameInput] = useState("");
-      const [teamCount, setTeamCount] = useState(4);
-      const [membersPerTeam, setMembersPerTeam] = useState(5);
-      const [teams, setTeams] = useState([]);
-
-      const parsedNames = useMemo(() => {
-        return nameInput.split(/\n|,/).map(n => n.trim()).filter(Boolean);
-      }, [nameInput]);
-
-      const totalSlots = teamCount * membersPerTeam;
-
-      function handleShuffle() {
-        if (parsedNames.length < totalSlots) {
-          alert(`Need at least ${totalSlots} names for ${teamCount} teams × ${membersPerTeam} members.`);
-          return;
-        }
-        const generated = splitTeams(parsedNames, teamCount, membersPerTeam);
-        setTeams(generated);
-      }
-
-      function handleStart() {
-        if (!teams.length) {
-          alert("Please shuffle teams first!");
-          return;
-        }
-        onStartQuiz(teams);
-      }
-
-      return (
-        <div className="page-setup">
-          <WatermarkBackground />
-          <div className="container">
-            <h1 className="main-title">🚀 <span>Tech Emoji Quiz</span> 🎮</h1>
-            <p className="subtitle">The Ultimate Tech Knowledge Battle! Split your team and compete!</p>
-
-            <div className="card">
-              <h3>👥 Enter Participant Names</h3>
-              <div className="name-input-wrapper">
-                <textarea
-                  rows="5"
-                  placeholder="Enter names separated by comma or new line...&#10;Example: John, Jane, Mike, Sarah, Tom, Lisa..."
-                  value={nameInput}
-                  onChange={e => setNameInput(e.target.value)}
-                />
-              </div>
-
-              <div className="row">
-                <div>
-                  <label style={{ display: 'block', marginBottom: 5, color: '#6b7280', fontSize: '0.85rem', fontWeight: 600 }}>
-                    🎯 Number of Teams
-                  </label>
-                  <input
-                    type="number"
-                    min="2"
-                    max="10"
-                    value={teamCount}
-                    onChange={e => setTeamCount(Math.max(2, Number(e.target.value || 2)))}
-                  />
-                </div>
-                <div>
-                  <label style={{ display: 'block', marginBottom: 5, color: '#6b7280', fontSize: '0.85rem', fontWeight: 600 }}>
-                    👤 Members per Team
-                  </label>
-                  <input
-                    type="number"
-                    min="1"
-                    max="20"
-                    value={membersPerTeam}
-                    onChange={e => setMembersPerTeam(Math.max(1, Number(e.target.value || 1)))}
-                  />
-                </div>
-              </div>
-
-              <button className="btn btn-primary" onClick={handleShuffle}>
-                🔀 SHUFFLE & CREATE TEAMS
-              </button>
-
-              <p className="info-text">
-                ✅ Names entered: <strong style={{ color: '#764ba2' }}>{parsedNames.length}</strong> | 
-                📋 Required: <strong style={{ color: '#764ba2' }}>{totalSlots}</strong>
-              </p>
-
-              {teams.length > 0 && (
-                <>
-                  <div className="teams-grid">
-                    {teams.map((team, idx) => (
-                      <div key={team.name} className="team-card">
-                        <h4>🏆 {team.name}</h4>
-                        <div className="members-list">
-                          {team.members.map((m, i) => (
-                            <span key={`${team.name}-${i}`} className="member-tag">{m}</span>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <button className="btn btn-gold" onClick={handleStart} style={{ marginTop: 20 }}>
-                    🎯 START THE QUIZ BATTLE →
-                  </button>
-                </>
-              )}
+            <button className="btn btn-primary" style={{ width: "100%" }} onClick={handleJoin} disabled={loading}>
+              {loading ? "Joining..." : "Join Quiz"}
+            </button>
+            <div className="center" style={{ marginTop: "10px" }}>
+              <button className="btn btn-admin" onClick={goAdmin}>Admin Login</button>
             </div>
           </div>
         </div>
       );
     }
 
-    // Page 2: Quiz Game - Compact layout, no scrolling
-    function QuizGamePage({ teams, onEndGame }) {
-      const [quiz] = useState(() => shuffleArray(TECH_QUIZ));
-      const [currentIndex, setCurrentIndex] = useState(0);
-      const [countdown, setCountdown] = useState(15);
-      const [isTimerRunning, setIsTimerRunning] = useState(false);
-      const [questionStarted, setQuestionStarted] = useState(false);
-      const [canReveal, setCanReveal] = useState(false);
-      const [showAnswer, setShowAnswer] = useState(false);
-      const [scores, setScores] = useState(() => {
-        const init = {};
-        teams.forEach(t => init[t.name] = 0);
-        return init;
-      });
-      const [wrongPopup, setWrongPopup] = useState("");
-      const [partyBlast, setPartyBlast] = useState(false);
-      const [isGameEnded, setIsGameEnded] = useState(false);
-      const [showChatbot, setShowChatbot] = useState(false);
+    function PlayerWaiting({ name, onStart, onEnded }) {
+      useEffect(() => {
+        const id = setInterval(async () => {
+          try {
+            const res = await fetch(`${API_BASE}/api/quiz/status`);
+            const data = await res.json();
+            if (data.ended) onEnded();
+            else if (data.started) {
+              playSound("start");
+              onStart();
+            }
+          } catch (e) {}
+        }, POLL_MS);
+        return () => clearInterval(id);
+      }, [onStart, onEnded]);
 
-      const timerRef = useRef(null);
-      const MAX_TIME = 15;
+      return (
+        <div className="container">
+          <h1 className="title">⚡ <span>Tech Emoji Quiz</span></h1>
+          <div className="card center" style={{ maxWidth: "560px", margin: "0 auto" }}>
+            <h3>Welcome, {name}</h3>
+            <p className="subtitle" style={{ marginTop: "8px", marginBottom: 0 }}>Waiting for admin to start...</p>
+            <div className="spinner"></div>
+          </div>
+        </div>
+      );
+    }
 
-      const currentTeamIndex = currentIndex % teams.length;
-      const currentTeam = teams[currentTeamIndex];
-      const nextTeam = teams[(currentTeamIndex + 1) % teams.length];
-      const question = quiz[currentIndex];
+    function PlayerResultPage({ playerName, result, ranking, onExit, totalQuestions }) {
+      return (
+        <div className="container">
+          <h1 className="title">🏁 <span>Final Result</span></h1>
+          <p className="subtitle">Player: {playerName}</p>
+          <div className="card result-enter">
+            <div className="result-grid">
+              <div className="result-card"><div className="label">Your Score</div><div className="value">{result.score} / {totalQuestions}</div></div>
+              <div className="result-card"><div className="label">Correct</div><div className="value">{result.correctAnswers}</div></div>
+              <div className="result-card"><div className="label">Wrong</div><div className="value">{result.wrongAnswers}</div></div>
+              <div className="result-card"><div className="label">Rank</div><div className="value">#{result.rank}</div></div>
+            </div>
 
-      const topScorer = useMemo(() => {
-        const sorted = teams.map(t => ({ name: t.name, score: scores[t.name] || 0 }))
-          .sort((a, b) => b.score - a.score);
-        return sorted[0];
-      }, [scores, teams]);
+            <h3 style={{ marginTop: "14px" }}>Leaderboard</h3>
+            <div className="rank-list">
+              {ranking.map((p, i) => (
+                <div className={`rank-row ${i < 3 ? "top-rank" : ""}`} key={p.playerId || i} style={{ animationDelay: `${Math.min(i, 8) * 0.06}s` }}>
+                  <div>{p.rank === 1 ? "🥇" : p.rank === 2 ? "🥈" : p.rank === 3 ? "🥉" : `#${p.rank || i + 1}`}</div>
+                  <div>{p.playerName}</div>
+                  <div>{p.score}</div>
+                </div>
+              ))}
+            </div>
+
+            <div className="center" style={{ marginTop: "14px" }}>
+              <button className="btn btn-danger" onClick={onExit}>Exit</button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function PlayerQuiz({ playerId, playerName, onExit }) {
+      const [quizSet] = useState(() => prepareQuiz());
+      const [idx, setIdx] = useState(0);
+      const [selected, setSelected] = useState(null);
+      const [locked, setLocked] = useState(false);
+      const [timeLeft, setTimeLeft] = useState(QUESTION_SECONDS);
+      const [status, setStatus] = useState("");
+      const [result, setResult] = useState(null);
+      const [ranking, setRanking] = useState([]);
+      const [waitingForAdminResult, setWaitingForAdminResult] = useState(false);
+      const endSoundPlayed = useRef(false);
+
+      const question = quizSet[idx];
+      const isLast = idx === quizSet.length - 1;
+      const progressPercent = Math.round(((idx + 1) / quizSet.length) * 100);
+      const timerPercent = Math.max(0, Math.min(100, (timeLeft / QUESTION_SECONDS) * 100));
+      const timerState = timeLeft <= 5 ? "timer-danger" : timeLeft <= 9 ? "timer-warn" : "timer-good";
 
       useEffect(() => {
-        if (!isTimerRunning) {
-          if (timerRef.current) clearInterval(timerRef.current);
-          return;
-        }
-
-        timerRef.current = setInterval(() => {
-          setCountdown(prev => {
+        if (result || waitingForAdminResult || locked) return;
+        const timerId = setInterval(() => {
+          setTimeLeft((prev) => {
             if (prev <= 1) {
-              clearInterval(timerRef.current);
-              setIsTimerRunning(false);
-              setCanReveal(true);
+              clearInterval(timerId);
+              setLocked(true);
+              setStatus("Time up! Moving to next...");
+              stopLoopSound("countdown");
+              playSound("timer");
+              submitAnswer(false);
+              setTimeout(() => nextQuestion(), 750);
               return 0;
             }
             return prev - 1;
           });
         }, 1000);
+        return () => clearInterval(timerId);
+      }, [idx, locked, result, waitingForAdminResult]);
 
-        return () => {
-          if (timerRef.current) clearInterval(timerRef.current);
-        };
-      }, [isTimerRunning]);
-
-      function startQuestion() {
-        setQuestionStarted(true);
-        setIsTimerRunning(true);
-      }
-
-      function skipTimer() {
-        if (isTimerRunning) {
-          if (timerRef.current) clearInterval(timerRef.current);
-          setCountdown(0);
-          setIsTimerRunning(false);
-          setCanReveal(true);
+      useEffect(() => {
+        if (!result && !waitingForAdminResult && !locked && timeLeft <= 5 && timeLeft > 0) {
+          playLoopSound("countdown");
+        } else {
+          stopLoopSound("countdown");
         }
+      }, [timeLeft, result, waitingForAdminResult, locked]);
+
+      useEffect(() => {
+        return () => stopLoopSound("countdown");
+      }, []);
+
+      useEffect(() => {
+        const poll = setInterval(async () => {
+          try {
+            const res = await fetch(`${API_BASE}/api/quiz/status`);
+            const data = await res.json();
+            if (data.ended) {
+              await loadResult();
+            }
+          } catch (e) {}
+        }, POLL_MS);
+        return () => clearInterval(poll);
+      }, []);
+
+      async function submitAnswer(isCorrect) {
+        try {
+          await fetch(`${API_BASE}/api/player/answer`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ playerId, correct: isCorrect })
+          });
+        } catch (e) {}
       }
 
-      function resetRound() {
-        setCountdown(15);
-        setCanReveal(false);
-        setShowAnswer(false);
-        setWrongPopup("");
-        setQuestionStarted(false);
-        setIsTimerRunning(false);
+      async function markCompleted() {
+        try {
+          await fetch(`${API_BASE}/api/player/complete`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ playerId })
+          });
+        } catch (e) {}
       }
 
-      function moveNext() {
-        if (currentIndex + 1 >= quiz.length) {
-          setIsGameEnded(true);
-          setPartyBlast(true);
+      async function loadResult() {
+        try {
+          const [r1, r2] = await Promise.all([
+            fetch(`${API_BASE}/quiz/result/${playerId}`),
+            fetch(`${API_BASE}/quiz/leaderboard`)
+          ]);
+          if (r1.ok) {
+            const resultData = await r1.json();
+            setResult(resultData);
+          }
+          if (r2.ok) {
+            const list = await r2.json();
+            setRanking(Array.isArray(list) ? list : []);
+          }
+          if (!endSoundPlayed.current) {
+            playSound("end");
+            endSoundPlayed.current = true;
+          }
+        } catch (e) {}
+      }
+
+      async function finishNormally() {
+        stopLoopSound("countdown");
+        await markCompleted();
+        setWaitingForAdminResult(true);
+        setStatus("Waiting for admin result...");
+      }
+
+      function nextQuestion() {
+        stopLoopSound("countdown");
+        if (isLast) {
+          finishNormally();
           return;
         }
-        
-        // Show chatbot for next team
-        setShowChatbot(true);
-        setTimeout(() => setShowChatbot(false), 3000);
-        
-        setCurrentIndex(currentIndex + 1);
-        resetRound();
+        setIdx((v) => v + 1);
+        setSelected(null);
+        setLocked(false);
+        setTimeLeft(QUESTION_SECONDS);
+        setStatus("");
       }
 
-      function handleReveal() {
-        setShowAnswer(true);
+      async function choose(opt) {
+        if (locked || result) return;
+        stopLoopSound("countdown");
+        setSelected(opt);
+        setLocked(true);
+        const correct = opt === question.correct;
+        await submitAnswer(correct);
+        if (correct) {
+          setStatus("Correct!");
+          playSound("correct");
+        } else {
+          setStatus("Wrong answer");
+          playSound("wrong");
+        }
+        setTimeout(() => nextQuestion(), 900);
       }
 
-      function handleCorrect() {
-        setScores(prev => ({
-          ...prev,
-          [currentTeam.name]: (prev[currentTeam.name] || 0) + 1
-        }));
-        setPartyBlast(true);
-        setTimeout(() => setPartyBlast(false), 4000);
-        setTimeout(moveNext, 2000);
+      function optionClass(opt) {
+        if (selected === null) return "option";
+        if (opt === question.correct) {
+          const blink = selected === opt ? " blink-correct" : "";
+          return `option option-correct${blink}`;
+        }
+        if (opt === selected && opt !== question.correct) {
+          return "option option-wrong blink-wrong";
+        }
+        return "option";
       }
 
-      function handleWrong() {
-        const msg = WRONG_MESSAGES[Math.floor(Math.random() * WRONG_MESSAGES.length)];
-        setWrongPopup(msg);
-        setTimeout(moveNext, 1500);
+      if (result) {
+        return <PlayerResultPage playerName={playerName} result={result} ranking={ranking} totalQuestions={quizSet.length} onExit={onExit} />;
       }
 
-      function handleEndGame() {
-        setIsGameEnded(true);
-        setIsTimerRunning(false);
-        setPartyBlast(true);
+      if (waitingForAdminResult) {
+        return (
+          <div className="container">
+            <h1 className="title">✅ <span>Quiz Completed</span></h1>
+            <p className="subtitle">Waiting for admin to end the quiz...</p>
+            <div className="card center" style={{ maxWidth: "620px", margin: "0 auto" }}>
+              <h3>Waiting for Admin Result...</h3>
+              <div className="spinner"></div>
+              <p className="subtitle" style={{ marginBottom: 0 }}>⏳ Loading... The admin will end the quiz soon.</p>
+            </div>
+          </div>
+        );
       }
-
-      const progress = `${Math.min(currentIndex + 1, quiz.length)} / ${quiz.length}`;
 
       return (
-        <div className="page-quiz">
-          <WatermarkBackground />
-          <PartyBlast active={partyBlast} />
-          <ChatbotPopup teamName={nextTeam?.name} visible={showChatbot} />
-
-          <div className="container" style={{ height: '100%' }}>
-            <h1 className="main-title" style={{ marginBottom: 8, fontSize: '1.8rem' }}>
-              🎮 <span>Quiz Battle</span> 🏆
-            </h1>
-
-            <div className="quiz-fullscreen">
-              <div className="quiz-main">
-                <div className="question-badge">❓ Question {progress}</div>
-                
-                <div className="team-playing-header">
-                  {isGameEnded ? "🏆 GAME OVER!" : `🎯 ${currentTeam.name}'s Turn`}
+        <div className="container">
+          <h1 className="title">⚡ <span>Tech Emoji Quiz</span></h1>
+          <p className="subtitle">Player: {playerName}</p>
+          <div className="card quiz-main">
+            <div className="quiz-head">
+              <span className="pill">Question {idx + 1} / {quizSet.length}</span>
+              <div className={`timer-ring ${timerState}`} style={{ "--progress": timerPercent }}>
+                <div className="timer-content">
+                  <small>TIME</small>
+                  {timeLeft}s
                 </div>
-
-                {/* Show Team Members */}
-                {!isGameEnded && (
-                  <div className="team-members-display">
-                    {currentTeam.members.map((member, idx) => (
-                      <span key={idx} className="member-badge">{member}</span>
-                    ))}
-                  </div>
-                )}
-
-                {question && !isGameEnded && (
-                  <>
-                    {!questionStarted ? (
-                      <div className="wait-start">
-                        <h2>🎯 {currentTeam.name} - Ready?</h2>
-                        <button className="btn btn-start" onClick={startQuestion}>
-                          ▶️ START
-                        </button>
-                      </div>
-                    ) : (
-                      <>
-                        {question.icon ? (
-                          <div className="icon-display">
-                            <img src={question.icon} alt="Guess this tech" />
-                          </div>
-                        ) : (
-                          <div className="emoji-display">{question.emoji}</div>
-                        )}
-
-                        <div className="timer-container">
-                          <ClockTimer seconds={countdown} maxSeconds={MAX_TIME} />
-                          <div className="skip-button-wrapper">
-                            <button 
-                              className="skip-timer-btn" 
-                              onClick={skipTimer}
-                              disabled={!isTimerRunning}
-                              title="Skip Timer"
-                            >
-                              ⏭️ SKIP
-                            </button>
-                          </div>
-                        </div>
-                        <div className="clock-label">⏱️ Seconds</div>
-
-                        <div className="answer-text">
-                          {showAnswer ? `✨ ${question.answer}` : "🤔 What is this?"}
-                        </div>
-
-                        <div className="actions-row">
-                          <button 
-                            className="btn btn-primary btn-action" 
-                            onClick={handleReveal}
-                            disabled={!canReveal || showAnswer}
-                          >
-                            👀 SHOW
-                          </button>
-                          <button 
-                            className="btn btn-success btn-action" 
-                            onClick={handleCorrect}
-                            disabled={!showAnswer}
-                          >
-                            ✅ CORRECT
-                          </button>
-                          <button 
-                            className="btn btn-danger btn-action" 
-                            onClick={handleWrong}
-                            disabled={!showAnswer}
-                          >
-                            ❌ WRONG
-                          </button>
-                        </div>
-
-                        {wrongPopup && <div className="wrong-popup">{wrongPopup}</div>}
-                      </>
-                    )}
-                  </>
-                )}
               </div>
+            </div>
+            <div className="progress-wrap" aria-label="Quiz progress">
+              <div className="progress-track">
+                <div className="progress-fill" style={{ width: `${progressPercent}%` }}></div>
+              </div>
+            </div>
+            <div className="emoji emoji-animate" key={idx}>{question.emoji}</div>
+            <p className="clue">{question.clue}</p>
+            <div className="options-grid">
+              {question.options.map((opt) => (
+                <button key={opt} className={optionClass(opt)} disabled={locked} onClick={() => choose(opt)}>{opt}</button>
+              ))}
+            </div>
+            <p className="status-line">{status}</p>
+          </div>
+        </div>
+      );
+    }
 
-              <div className="scoreboard">
-                <h3>🏅 SCOREBOARD</h3>
-                {teams.map(team => {
-                  const score = scores[team.name] || 0;
-                  const isLeading = topScorer && score === topScorer.score && score > 0;
-                  return (
-                    <div key={team.name} className={`score-item ${isLeading ? 'leading' : ''}`}>
-                      <span className="team-name">{team.name}</span>
-                      <span className="score">{score}</span>
-                    </div>
-                  );
-                })}
+    function AdminAuth({ onAccess, onBack }) {
+      const [secret, setSecret] = useState("");
+      const [loading, setLoading] = useState(false);
 
-                {isGameEnded && topScorer && (
-                  <div className="winner-banner">
-                    <h4>🎉 CHAMPION: {topScorer.name}</h4>
-                    <p style={{ margin: '8px 0 0', fontSize: '1rem' }}>
-                      Score: {topScorer.score} / {quiz.length}
-                    </p>
-                  </div>
-                )}
+      async function login() {
+        if (!secret.trim()) return;
+        setLoading(true);
+        try {
+          const res = await fetch(`${API_BASE}/admin/players`, { headers: { "X-Admin-Secret": secret.trim() } });
+          if (!res.ok) {
+            alert("Invalid admin password");
+            setLoading(false);
+            return;
+          }
+          onAccess(secret.trim());
+        } catch (e) {
+          alert("Unable to authenticate admin");
+          setLoading(false);
+        }
+      }
 
-                <div className="end-game-btn">
-                  <button className="btn btn-danger" onClick={handleEndGame}>
-                    ⏹️ END GAME
-                  </button>
-                  {isGameEnded && (
-                    <button className="btn btn-primary" onClick={onEndGame}>
-                      🔄 NEW GAME
-                    </button>
+      return (
+        <div className="container">
+          <a href="#" className="back-link" onClick={onBack}>← Back</a>
+          <h1 className="title">⚡ <span>Admin Login</span></h1>
+          <div className="card" style={{ maxWidth: "560px", margin: "0 auto" }}>
+            <input className="input" type="password" value={secret} onChange={(e) => setSecret(e.target.value)} placeholder="Admin password" />
+            <button className="btn btn-admin" style={{ marginTop: "10px", width: "100%" }} onClick={login} disabled={loading}>
+              {loading ? "Checking..." : "Open Dashboard"}
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    function AdminDashboard({ secret, onLogout }) {
+      const [players, setPlayers] = useState([]);
+      const [busy, setBusy] = useState(false);
+
+      useEffect(() => {
+        const headers = { "X-Admin-Secret": secret };
+        const poll = async () => {
+          try {
+            const res = await fetch(`${API_BASE}/admin/players`, { headers });
+            if (res.status === 403) {
+              alert("Unauthorized admin session");
+              onLogout();
+              return;
+            }
+            const data = await res.json();
+            setPlayers(Array.isArray(data) ? data : []);
+          } catch (e) {}
+        };
+        poll();
+        const id = setInterval(poll, POLL_MS);
+        return () => clearInterval(id);
+      }, [secret, onLogout]);
+
+      async function startQuiz() {
+        setBusy(true);
+        try {
+          await fetch(`${API_BASE}/api/quiz/start`, { method: "POST", headers: { "X-Admin-Secret": secret } });
+          playSound("start");
+        } finally {
+          setBusy(false);
+        }
+      }
+
+      async function endQuiz() {
+        setBusy(true);
+        try {
+          await fetch(`${API_BASE}/admin/endQuiz`, { method: "POST", headers: { "X-Admin-Secret": secret } });
+          playSound("end");
+        } finally {
+          setBusy(false);
+        }
+      }
+
+      return (
+        <div className="container">
+          <a href="#" className="back-link" onClick={onLogout}>← Logout</a>
+          <h1 className="title">⚡ <span>Admin Dashboard</span></h1>
+          <p className="subtitle">Player stats and quiz controls</p>
+
+          <div className="card row-gap">
+            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+              <button className="btn btn-success" onClick={startQuiz} disabled={busy}>Start Quiz</button>
+              <button className="btn btn-danger" onClick={endQuiz} disabled={busy}>End Quiz</button>
+            </div>
+          </div>
+
+          <div className="card">
+            <h3 className="row-gap">Player Statistics</h3>
+            <div className="table-wrap">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>Player</th>
+                    <th>Attempted</th>
+                    <th>Correct</th>
+                    <th>Wrong</th>
+                    <th>Score</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {players.length === 0 && (
+                    <tr><td colSpan="5">No players joined yet.</td></tr>
                   )}
-                </div>
-              </div>
+                  {players.map((p, i) => (
+                    <tr key={p.playerId || i}>
+                      <td>{p.playerName}</td>
+                      <td>{p.questionsAttempted}</td>
+                      <td>{p.correctAnswers}</td>
+                      <td>{p.wrongAnswers}</td>
+                      <td>{p.score}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
       );
     }
 
-    // Main App
     function App() {
-      const [page, setPage] = useState('setup');
-      const [teams, setTeams] = useState([]);
+      const [screen, setScreen] = useState("home");
+      const [playerId, setPlayerId] = useState(null);
+      const [playerName, setPlayerName] = useState("");
+      const [adminSecret, setAdminSecret] = useState("");
 
-      function startQuiz(generatedTeams) {
-        setTeams(generatedTeams);
-        setPage('quiz');
+      useEffect(() => {
+        decorateWatermarks();
+      }, []);
+
+      function reset() {
+        setScreen("home");
+        setPlayerId(null);
+        setPlayerName("");
+        setAdminSecret("");
       }
 
-      function endGame() {
-        setTeams([]);
-        setPage('setup');
+      function handleJoin(id, name) {
+        setPlayerId(id);
+        setPlayerName(name);
+        setScreen("waiting");
       }
 
-      return page === 'setup' 
-        ? <TeamSetupPage onStartQuiz={startQuiz} />
-        : <QuizGamePage teams={teams} onEndGame={endGame} />;
+      let content = null;
+      if (screen === "home") content = <HomeJoin onJoin={handleJoin} goAdmin={() => setScreen("admin-auth")} />;
+      else if (screen === "waiting") content = <PlayerWaiting name={playerName} onStart={() => setScreen("quiz")} onEnded={() => setScreen("quiz")} />;
+      else if (screen === "quiz") content = <PlayerQuiz playerId={playerId} playerName={playerName} onExit={reset} />;
+      else if (screen === "admin-auth") content = <AdminAuth onBack={reset} onAccess={(s) => { setAdminSecret(s); setScreen("admin"); }} />;
+      else content = <AdminDashboard secret={adminSecret} onLogout={reset} />;
+
+      return (
+        <div className="app" onPointerDown={unlockAudio} onKeyDown={unlockAudio}>
+          {content}
+        </div>
+      );
     }
 
     ReactDOM.createRoot(document.getElementById("root")).render(<App />);
